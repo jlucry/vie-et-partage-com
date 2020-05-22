@@ -1,0 +1,228 @@
+﻿@using Models;
+@using Services;
+@using System.Globalization;
+@using System.Net;
+@{
+    bool asList = true;
+    IEnumerable<SiteClaim> categories = null;
+    //Console.WriteLine("+++ Vep:Post:Index.cshtml...");
+    // Get app context...
+    WcmsAppContext appctx = (WcmsAppContext)ViewContext.RouteData.Values["appcontext"];
+    // Get page provider...
+    PageProvider provider = new PageProvider(appctx);
+    // Get childs categories...
+    if (appctx?.Page?.Category1 != null || appctx?.Cat != null)
+    {
+        int parentCat = (appctx.Cat != null) ? appctx.RouteCatId : appctx.Page.Category1;
+        if (parentCat != -1)
+        {
+            categories = appctx?.Site?.GetCategories(parentCat);
+        }
+    }
+    // Posts...
+    IEnumerable<Post> posts = (IEnumerable<Post>)ViewBag.Posts;
+    // The url...
+    string pageUrl = this.Context.Request.Path.Value.ToLower();
+    // Page related...
+    int pageTake = ViewBag.pageTake ?? 0;
+    int pageSkip = ViewBag.pageSkip ?? 0;
+    int pagesMax = ViewBag?.pageMax ?? 0;
+    if (pagesMax != 0)
+    {
+        pagesMax = (pagesMax % pageTake == 0) ? (pagesMax / pageTake) : (pagesMax / pageTake + 1);
+    }
+    int pageMin = pageSkip - 10;
+    int pageMax = pageSkip + 10;
+    if (pageMin < 0) { pageMin = 0; }
+    if (pageMax > pagesMax) { pageMax = pagesMax; }
+    int pagePrev = pageSkip - 1;
+    int pageNext = pageSkip + 1;
+    if (pagePrev < 0) { pagePrev = 0; }
+    if (pageNext >= pagesMax) { pageNext = pagesMax - 1; }
+    // Calendar related...
+    bool calendar = ViewBag?.calendar ?? false;
+    DateTime? lastMonth = null;
+    DateTime? postMonth = null;
+    bool dateFilterShow = false;
+    DateTime now = DateTime.Now;
+    // Url extension...
+    string urlExtension = (calendar == true) ? "/cldr" : null;
+}
+
+@section head {
+
+}
+
+<div class="container" style="width:100%;padding:0px;">
+    <div id="content" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding-top:0px;padding-bottom:0px;">
+        <div class="row" style="text-align-off: center;">
+            @if (categories != null && categories.Count() > 0 && appctx.Page != null)
+            {
+                <div class="calloutbox" style="padding-bottom:0px;margin-top:0px;margin-bottom:0px;">
+                    <div class="col-lg-12">
+                        <p class="lead">
+                            @foreach (SiteClaim catg in categories)
+                            {
+                                <a style="color:white;margin-right:20px;white-space: nowrap;" href="@appctx.Page?.GetCategoryUrl(appctx, catg, urlExtension)"><i class="fa fa-tag"></i> @Html.Raw(WebUtility.HtmlDecode(catg.StringValue))</a>
+                            }
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@if (asList == true)
+{
+    <section class="blog-wrapper">
+        <div class="container">
+            @*if (pageSkip == 0 && dateFilterShow == false)
+            {
+                dateFilterShow = true;
+                <div class="pull-right col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <select class="custom-select form-control">
+                        @for (int moutn = 0; moutn < 12; moutn += 1)
+                        {
+                            DateTime loopMonth = now.AddMonths(moutn);
+                            <option value="@moutn" selected>@loopMonth.ToString("MMMM yyyy", new CultureInfo("fr-FR"))</option>
+                        }
+                    </select>
+                </div>
+            }*@
+
+            @if ((posts?.Count() ?? 0) > 0)
+            {
+                <div id="content" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding-bottom:0px;">
+                    <div class="widget">
+                        <div class="row reviews_widget">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="col-sm-12">
+                                    <div class="widget">
+                                        <ul class="recent_posts_widget">
+                                            @foreach (Post ltst in posts)
+                                            {
+                                                postMonth = null;
+                                                if (calendar == true && ltst.StartDate != null)
+                                                {
+                                                    postMonth = new DateTime(ltst.StartDate.Value.Year, ltst.StartDate.Value.Month, 1);
+                                                }
+                                                if (postMonth != null)
+                                                {
+                                                    if (lastMonth == null || lastMonth.Value.Subtract(postMonth.Value).Ticks != 0)
+                                                    {
+                                                        <li class="calloutbox" style="padding-top:0px;padding-bottom:0px;">
+                                                            <div class="col-lg-12" style="padding-left:0px;">
+                                                                <p class="lead">
+                                                                    <h1 style="color:white;"><i class="fa fa-calendar"></i> @postMonth.Value.ToString("MMMM yyyy", new CultureInfo("fr-FR"))</h1>
+                                                                </p>
+                                                            </div>
+                                                        </li>
+                                                    }
+                                                    lastMonth = postMonth;
+                                                }
+                                                <li>
+                                                    <table>
+                                                        <tr valign="top">
+                                                            @if (ltst.Cover != null)
+                                                            {
+                                                                <td><img src="@ltst.GetCoverUrl(true)" alt="" class="img-circle img-thumbnail" style="height:40px;width:40px;" /></td> }
+                                                            <td>
+                                                                <a href="@ltst.GetUrl(appctx)">@Html.Raw(ltst.GetTitle(70))</a>
+                                                                <div class="blog-carousel-meta">
+                                                                    @if (calendar == true) { if (ltst.StartDate != null) { <span><i class="fa fa-calendar"></i> @ltst.GetStartDate(true)</span> } }
+                                                                    else { <span><i class="fa fa-rss"></i> @ltst.GetPublicationDate()</span> }
+                                                                    @if (ViewBag.ForAllRegion == true) { <span style="font-style:italic;"><i class="fa fa-globe"></i> @ltst.GetRegionsAsString(appctx)</span> }
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <hr style="margin-top:0px;margin-bottom:0px;">
+                <div class="pagination_wrapper text-center">
+                    <ul class="pagination">
+                        <li><a href="@($"{pageUrl}?skip={pagePrev}")" style="margin-top:5px;">«</a></li>
+                        @for (int pageDx = pageMin; pageDx < pageMax; pageDx += 1)
+                        {
+                            <li class="@((pageDx == pageSkip) ? "active" : "")"><a href="@($"{pageUrl}?skip={pageDx}")" style="margin-top:5px;">@(pageDx + 1)</a></li>
+                        }
+                        <li><a href="@($"{pageUrl}?skip={pageNext}")" style="margin-top:5px;">»</a></li>
+                    </ul>
+                </div>
+            }
+        </div>
+    </section>
+}
+else
+{
+    <section class="blog-wrapper">
+        <div class="container">
+            <div id="content" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="row">
+                    <div class="blog-masonry">
+                        @if ((posts?.Count() ?? 0) > 0)
+                        {
+                            int iDex = 0;
+                            foreach (Post post in posts)
+                            {
+                                string postCover = post.GetCoverUrl(true);
+                                string postUrl = post.GetUrl(appctx);
+                                iDex += 1;
+                                <div class="col-sm-4 @(((iDex % 3 == 1) ? "first" : ((iDex % 3 == 2) ? "" : "last")))">
+                                    <div class="blog-carousel">
+                                        @if (string.IsNullOrEmpty(postCover) == false)
+                                        {
+                                            <div class="entry">
+                                                <a class="st" rel="bookmark" href="@postUrl"><img src="@postCover" alt="" class="img-responsive"></a>
+                                                <div class="post-type">
+                                                    <i class="fa fa-picture-o"></i>
+                                                </div>
+                                            </div>
+                                        }
+                                        <div class="blog-carousel-header">
+                                            <h3><a title="" href="@postUrl"> @Html.Raw(post.GetTitle(-1))</a></h3>
+                                            <div class="blog-carousel-meta">
+                                                <span><i class="fa fa-calendar"></i> @post.GetPublicationShortDate()</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <hr>
+
+                    <asp:Menu ID="Pager" CssClass="pagination_wrapper" runat="server"
+                              Orientation="Horizontal"
+                              ItemWrap="True"
+                              StaticDisplayLevels="2"
+                              StaticSubMenuIndent="0px">
+                        <StaticMenuStyle CssClass="pagination" />
+                        <StaticSelectedStyle CssClass="" BackColor="#4dA2D8" ForeColor="White" BorderColor="#4dA2D8" BorderStyle="Solid" BorderWidth="1px" HorizontalPadding="20px" VerticalPadding="10px" Font-Bold="true" />
+                        <StaticMenuItemStyle CssClass="" BackColor="#eeeeee" ForeColor="Black" BorderColor="#ededed" BorderStyle="Solid" BorderWidth="1px" HorizontalPadding="20px" VerticalPadding="10px" />
+                        <StaticHoverStyle CssClass="" BackColor="#4dA2D8" ForeColor="White" />
+                    </asp:Menu>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+@section scripts {
+
+}
+
+@{
+//Console.WriteLine("+++ Vep:Post:Index.cshtml: END.");
+}

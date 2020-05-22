@@ -1,0 +1,128 @@
+﻿@using Models;
+@using Services;
+@using System.Net;
+
+@model List<JsonPostRegistrationField>
+
+@{
+    //Console.WriteLine("+++ Vep:Post:Register.cshtml...");
+    //// Get app context...
+    //WcmsAppContext appctx = (WcmsAppContext)ViewContext.RouteData.Values["appcontext"];
+    //// Get the post...
+    //Post post = appctx?.Post;
+}
+
+<section class="blog-wrapper">
+    <div class="container">
+        <div id="content" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                <div class="blog-masonry">
+                    @if (string.IsNullOrEmpty(ViewBag.RegistrationMessage) == false)
+                    {
+                        <div class="col-lg-12">
+                            <div class="doc">
+                                <div class="alert alert-danger">
+                                    @Html.Raw(ViewBag.RegistrationMessage)
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @if (string.IsNullOrEmpty(ViewBag.RegistrationResult) == false)
+                    {
+                        <div class="col-lg-12">
+                            <div class="doc">
+                                <div class="alert alert-success">
+                                    @Html.Raw(ViewBag.RegistrationResult)
+                                </div>
+                                <a href="@this.Context.Request.Path.Value?.ToLower()?.Replace("preg", "pt")">Continuer</a>
+                            </div>
+                        </div>
+                    }
+                    @if ((Model?.Count ?? 0) != 0)
+                    {
+                    <div class="col-lg-12">
+                        <div class="blog-carousel">
+                            <form asp-action="Register">
+                                @for (int i = 0; i < Model?.Count; i++)
+                                {
+                                    string extraStyle = (Model[i].IsError == true) ? "color: red;" : string.Empty;
+                                    string extraStyle2 = (Model[i].IsError2 == true) ? "color: red;" : string.Empty;
+                                    <div layout="column" flex="100">
+                                        <blockquote>
+                                            <div layout="column" flex>
+                                                <input asp-for="@Model[i].Type" type="hidden" value="@Model[i].Type"/>
+                                                <input asp-for="@Model[i].Title" type="hidden" value="@Model[i].Title" />
+                                                <input asp-for="@Model[i].Details" type="hidden" value="@Model[i].Details" />
+                                                @if (Model[i].Type == 1)
+                                                {
+                                                    <div class="form-group">
+                                                        <label class="control-label" style="@extraStyle">@Model[i].Title</label><br />
+                                                        <textarea asp-for="@Model[i].Value" rows="1" style="width:100%;"></textarea>
+                                                        <span asp-validation-for="@Model[i].Value" class="text-danger" />
+                                                    </div>
+                                                }
+                                                @if (Model[i].Type == 2 || Model[i].Type == 3)
+                                                {
+                                                    <div class="form-group">
+                                                        <label class="control-label" style="@extraStyle">@Model[i].Title</label><br />
+                                                        <select asp-for="@Model[i].Value" style="width:100%;">
+                                                            <option value="">---</option>
+                                                            <option value="Oui">Oui</option>
+                                                            <option value="Non">Non</option>
+                                                        </select>
+                                                    </div>
+                                                }
+                                                @if (Model[i].Type == 3)
+                                                {
+                                                    <div class="form-group">
+                                                        <label class="control-label" style="@extraStyle2">@Model[i].Details</label><br />
+                                                        <textarea asp-for="@Model[i].Value2" rows="4" style="width:100%;"></textarea>
+                                                    </div>
+                                                }
+                                                @if (Model[i].Type == 4 || Model[i].Type == 5)
+                                                {
+                                                    <div class="form-group">
+                                                        <label class="control-label" style="@(extraStyle+extraStyle2)">@Model[i].Title</label><br />
+                                                        <select asp-for="@Model[i].Value" style="width:100%;">
+                                                            <option value="">---</option>
+                                                            @foreach (var choose in Model[i].Choose)
+                                                            {
+                                                                <option value="@choose">@choose</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                }
+                                                @if (Model[i].Type == 5)
+                                                {
+                                                    <div class="form-group">
+                                                        <select asp-for="@Model[i].Value2" style="width:100%;">
+                                                            <option value="">---</option>
+                                                            @foreach (var choose2 in Model[i].Choose2)
+                                                            {
+                                                                <option value="@choose2">@choose2</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </blockquote>
+                                    </div>
+                                }
+
+                                <div class="form-actions no-color">
+                                    <input type="submit" value="Envoyer la fiche d'inscription" class="btn btn-default" style="font-family: Ubuntu, Helvetica; color: white; background-color: #4dA2D8; border-color: #4dA2D8 text-align: center; vertical-align: middle; display: inline-block; border-radius: 6px;height: 35px;" />
+                                    &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="@this.Context.Request.Path.Value?.ToLower()?.Replace("preg", "pt")">Retour</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@{
+    //Console.WriteLine("+++ Vep:Post:Post.cshtml: END.");
+}

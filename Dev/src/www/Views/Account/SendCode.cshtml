@@ -1,0 +1,27 @@
+﻿@model SendCodeViewModel
+@{
+    ViewData["Title"] = "Envoyer un code de vérification";
+}
+
+<section class="blog-wrapper">
+    <div class="container">
+        <div id="content" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                <form asp-controller="Account" asp-action="SendCode" asp-route-returnurl="@Model?.ReturnUrl" method="post" class="form-horizontal" style="margin:20px;" role="form">
+                    <input asp-for="RememberMe" type="hidden" />
+                    <div class="row">
+                        <div class="form-material" style="padding-bottom:20px;"> 
+                            Sélectionner un fournisseur d'authentification à deux facteurs:<br />
+                            <select asp-for="SelectedProvider" asp-items="Model?.Providers"></select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:20px;">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

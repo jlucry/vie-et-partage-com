@@ -1,0 +1,243 @@
+﻿@using Models;
+@using Services;
+@using Microsoft.AspNetCore.Mvc.ViewFeatures;
+@using Microsoft.Extensions.Primitives;
+@*inject WcmsAppContext appctx*@
+@{
+    //Console.WriteLine("+++ Vep:_Layout: ViewBag.HideMenu={0}...", ViewBag.HideMenu);
+    WcmsAppContext appctx = (WcmsAppContext)ViewContext.RouteData.Values["appcontext"];
+    string region = appctx?.Region?.StringValue ?? "Vie et partage";
+    string regionuri = (appctx?.Region?.StringValue == null) ? "/" : $"/{Framework.String.RemoveAccents(region).ToLower()}";
+    Dictionary<string, string> navPath = await appctx?.GetNavPath();
+    string googleanalytics_id = null;
+    try
+    {
+        googleanalytics_id = appctx?.Configuration[$"{appctx?.Module.Name}:googleanalytics_id"];
+    }
+    catch(Exception e) { }
+    string mailing_link_param = null;
+    try
+    {
+        mailing_link_param = appctx?.Configuration[$"{appctx?.Module.Name}:mailing_link_param"];
+    }
+    catch (Exception e) { }
+    string controller = ViewContext.RouteData.Values["controller"]?.ToString()?.ToLower();
+    bool showUserLinks = (string.IsNullOrEmpty(controller) == false
+        && (controller == "account" || controller == "manage"));
+    //Console.WriteLine("+++ Vep:_Layout: 1...");
+
+    //if (appctx?.Page?.RE)
+    //ViewBag.HideRegionMenu = true;
+}
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
+<html lang="fr">
+<head id="Head1">
+    <title>@ViewBag.MetaTitle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <META Name="description" Content="@Html.Raw(ViewBag.MetaDescription)">
+    <META Name="keywords" Content="@Html.Raw(ViewBag.MetaKeywords)">
+    <meta name="robots" content="@Html.Raw(ViewBag.MetaRobotsTerms)">
+    <meta http-equiv="content-language" content="fr">
+    <meta name="google-site-verification" content="H1yCP8asBj6x1eGRkumzb69JiUZ6djqfrQuI8LkhXXI" />
+    <meta name="msvalidate.01" content="8B9D19D40D32D97E3799D68F4457C66A" />
+    <link href="/theme/jollyany/css/bootstrap.css" rel="stylesheet">
+    <script>
+        if (navigator.userAgent.match(/IEMobile\/10\.0/) != null || navigator.userAgent.match(/WPDesktop/i) != null) {
+            var msViewportStyle = document.createElement("style");
+            msViewportStyle.appendChild(document.createTextNode("@@-ms-viewport{width:auto!important}"));
+            document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
+        }
+    </script>
+    <link href="/theme/jollyany/style.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,400italic,300italic,700,700italic,900' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Exo:400,300,600,500,400italic,700italic,800,900' rel='stylesheet' type='text/css'>
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!-- Enable media queries on older bgeneral_rowsers -->
+    <!--[if lt IE 9]>
+      <script src="/theme/jollyany/js/respond.min.js"></script>
+    <![endif]-->
+    @RenderSection("head", false)
+    <style>
+        .breadcrumb > li + li:before {content: "";background: url(/theme/jollyany/images/breadcrumb.png) no-repeat center center;margin: 0 5px;padding: 0 10px;}
+    </style>
+</head>
+
+<body>
+    @if (ViewBag.HideMenu == null || ViewBag.HideMenu == false)
+    {
+        <header id="header-style-1" style="padding-bottom:0px;border-bottom:none;">
+            <div class="container">
+                <nav class="navbar yamm navbar-default" style="margin-bottom: 0px;">
+                    <div class="navbar-header">
+                        <button type="button" data-toggle="collapse" data-target="#navbar-collapse-1" class="navbar-toggle">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a href="@regionuri" class="navbar-brand" style="font-size: 25px;">@region</a>
+                    </div>
+                    <div id="navbar-collapse-1" class="navbar-collapse collapse navbar-right">
+                        @await Html.PartialAsync("_NavPartial", new ViewDataDictionary(ViewData) { { "parentid", 0 } })
+                    </div>
+                </nav>
+            </div>
+        </header>
+        @if (ViewBag.HideRegionMenu == null || ViewBag.HideRegionMenu == false)
+        {
+            @await Html.PartialAsync("_RegionNavPartial")
+        }
+    }
+    @if ((ViewBag?.HideNavPath ?? false) == false)
+    {
+        <section class="post-wrapper-top jt-shadow clearfix">
+            <div class="container">
+                <div class="col-lg-12 bs-example-tooltips">
+                    <h2>@Html.Raw(ViewBag.Title)</h2>
+                    @*@if (ViewBag.ShowFilterAllRegion == true) {
+                        if ((appctx?.PostOfAllRegions ?? false) == true)
+                        {
+                            <span class="hidden-sm hidden-xs" style="top:-15px;position:relative;">(toutes régions) </span><a class="hidden-sm hidden-xs" href="reloadPage(false);return false;" data-toggle="tooltip" data-placement="top" title="Voir uniquement {2} de {1}." style="top: -15px;position: relative;"><i class="fa fa-retweet"></i></a>
+                        }
+                        else
+                        {
+                            <a class="hidden-sm hidden-xs" href="reloadPage(true);return false;" data-toggle="tooltip" data-placement="top" title="Voir pour toutes les régions." style="top: -15px;position relative;"><i class="fa fa-retweet"></i></a>
+                        }
+                    }*@
+                    @if (navPath != null)
+                    {
+                        <ul class="breadcrumb pull-right hidden-sm-off hidden-xs-off" style="font-size:11px;margin-right:0px;padding-right:0px;margin-bottom:-10px;">
+                            @*<li><a href="@regionuri">@region</a></li>*@
+                            @foreach (KeyValuePair<string, string> path in navPath.Reverse())
+                            {
+                                @if (string.IsNullOrEmpty(path.Value) == true)
+                                {
+                                    <li>@Html.Raw(path.Key)</li>
+                                }
+                                else
+                                {
+                                    <li><a href="@path.Value">@Html.Raw(path.Key)</a></li>
+                                }
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+    @RenderBody()
+    @*<section id="one-parallax" class="parallax" style="background-image: url('/theme/jollyany/images/vep/slider2.jpg');" data-stellar-background-ratio="0.6" data-stellar-vertical-offset="20">
+        <div class="custom-overlay" style="background-color: rgba(247,194,33,0.5);">
+            <div class="container">
+                <div class="testimonial-widget">
+                    <div id="owl-testimonial-2" class="owl-carousel">
+                        <div class="testimonial">
+                            <p class="lead" style="font-weight:bold;">Je suis le chemin, la vérité, et la vie. Nul ne vient au Père que par moi.</p>
+                            <h3 style="font-weight:bold;">Jésus Christ - Jean 14, 6</h3>
+                        </div>
+                        <div class="testimonial">
+                            <p class="lead" style="font-weight:bold;">Notre objectif en tant que chrétiens : nous conformer toujours plus à Jésus, comme modèle de notre comportement.</p>
+                            <h3 style="font-weight:bold;">Pape François</h3>
+                        </div>
+                        <div class="testimonial">
+                            <p class="lead" style="font-weight:bold;">Chers enfants, priez et soyez conscients que sans Dieu vous êtes poussière. C’est pourquoi, tournez vos pensées et votre coeur vers Dieu et vers la vie éternelle.</p>
+                            <h3 style="font-weight:bold;">Sainte Vierge Marie</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>*@
+    <footer id="footer-style-1">
+        <div class="container">
+            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                <div class="widget">
+                    <ul class="twitter_feed">
+                        @if ((User?.Identity?.IsAuthenticated ?? false) /*&& showUserLinks == true*/)
+                        {
+                            <li style="margin:6px;margin-top:10px;margin-bottom:10px;">Bonjour @UserManager.GetUserName(User)!</li>
+                            <li style="margin:6px;margin-top:10px;margin-bottom:10px;"><i class="fa fa-arrow-circle-o-right" style="color: #686868;"></i> <a asp-protocol="https" asp-controller="Manage" asp-action="Index" class="themePremierNiveau">Mon compte</a></li>                           
+                            <li style="margin:6px;"><i class="fa fa-arrow-circle-o-right" style="color: #686868;"></i> <a class="themePremierNiveau" href="/admin">Administration</a></li>
+                            <li style="margin:6px;margin-top:10px;margin-bottom:10px;"><i class="fa fa-sign-in"></i> <a asp-protocol="https" asp-controller="Account" asp-action="LogOff">Se déconnecter</a></li>
+                        }
+                        else
+                        {
+                            <li style="margin:6px;"><i class="fa fa-arrow-circle-o-right fa-2x-off" style="color: #686868;"></i> <a href="@mailing_link_param" class="themePremierNiveau">ABONNEZ-VOUS À LA NEWSLETTER !</a></li>
+                            <li style="margin:6px;"><i class="fa fa-arrow-circle-o-right fa-2x-off" style="color: #686868;"></i> <a asp-protocol="https" asp-controller="Account" asp-action="Register" class="themePremierNiveau">S'enregistrer (réserver au communautaire)</a></li>
+                            <li style="margin:6px;"><i class="fa fa-arrow-circle-o-right fa-2x-off" style="color: #686868;"></i> <a asp-protocol="https" asp-controller="Account" asp-action="Login" class="themePremierNiveau">Se connecter</a></li>
+                            <li style="margin:6px;"><i class="fa fa-arrow-circle-o-right" style="color: #686868;"></i> <a asp-protocol="https" asp-controller="Account" asp-action="ForgotPassword" class="themePremierNiveau">Mot de passe oublié&nbsp;?</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <div class="widget">
+                    <br />
+                    <ul class="footer_post">
+                        <li><a href="http://www.zjmradio.com/" onclick="window.open('http://www.zjmradio.com'); return false;"><img class="img-rounded" style="width:200px;height:200px;" src="/theme/jollyany/images/vep/ZJM3.jpg" alt="Zjm radio"></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <div class="widget">
+                    <br />
+                    <ul class="footer_post">
+                        <li><a href="https://fr-fr.facebook.com/ephataclothing.official" onclick="window.open('https://fr-fr.facebook.com/ephataclothing.official'); return false;"><img class="img-rounded" style="width:200px;height:200px;" src="/theme/jollyany/images/vep/ephata.png" alt=""></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div id="copyrights">
+        <div class="container">
+            <div class="col-lg-5 col-md-6 col-sm-6">
+                <div class="copyright-text">
+                    <p>Copyright © 2017 - Vie Et Partage</p>
+                </div>
+            </div>
+            <div class="col-lg-7 col-md-6 col-sm-12 clearfix">
+                <div class="footer-menu">
+                    <ul class="menu">
+                        <li>Page générée le @DateTime.Now.ToString("MM/dd/yy HH:mm:ss.fff")</i></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*<div class="dmtop">Scroll to Top</div>*@
+    <script src="/theme/jollyany/js/jquery.js"></script>
+    <script src="/theme/jollyany/js/bootstrap.min.js"></script>
+    <script src="/theme/jollyany/js/menu.js"></script>
+    <script>
+        (function ($) {
+            "use strict"
+            $('#regionListNav').change(function () { window.location = $(this).val(); });
+        })(jQuery);
+    </script>
+    @RenderSection("scripts", false)
+
+    <script type="text/javascript" src="https://app.mailjet.com/statics/js/widget.modal.js"></script>
+
+    @if (string.IsNullOrEmpty(googleanalytics_id) == false)
+    {
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ga('create', '@googleanalytics_id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    }
+</body>
+</html>
+
+@{
+    //Console.WriteLine("+++ Vep:_Layout: END.");
+    // Trace performance...
+    appctx?.AddPerfLog("Vep\\Views\\Shared\\_Layout.cshtml");
+}

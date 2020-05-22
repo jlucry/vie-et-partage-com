@@ -1,0 +1,29 @@
+﻿@using System.Security.Claims
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    //Console.WriteLine("+++ Vep:_LoginPartial...");
+}
+
+<div class="col-lg-4 col-md-4 pull-left hidden-sm hidden-xs" style="padding:0px;font-size: 11px;">
+    <div class="topmenu">
+        @if ((User?.Identity?.IsAuthenticated ?? false))
+        {
+            <form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm" class="navbar-right">
+                <span class="topbar-login"><a asp-controller="Manage" asp-action="Index" title="Manage"><i class="fa fa-user"></i> Bonjour @UserManager.GetUserName(User)!</a></span>
+                <span class="topbar-cart"><a href="javascript:document.getElementById('logoutForm').submit()"><i class="fa fa-sign-in"></i> Se déconnecter</a></span>
+            </form>
+        }
+        else
+        {
+            <span class="topbar-cart"><a asp-controller="Account" asp-action="Register"><i class="fa fa-user"></i> S'enregistrer</a></span>
+            <span class="topbar-login"><a asp-controller="Account" asp-action="Login"><i class="fa fa-sign-in"></i> Se connecter</a></span>
+        }
+    </div>
+</div>
+
+@{
+    //Console.WriteLine("+++ Vep:_LoginPartial: END.");
+}

@@ -1,0 +1,457 @@
+﻿@using Models;
+@using Services;
+@using System.Net;
+@{
+    //Console.WriteLine("+++ Vep:Post:Post.cshtml...");
+    // Get app context...
+    WcmsAppContext appctx = (WcmsAppContext)ViewContext.RouteData.Values["appcontext"];
+    // Get the post...
+    Post post = appctx?.Post;
+    // Get post files...
+    int postImgCount = 0;
+    int postVdoCount = 0;
+    int postAdoCount = 0;
+    int postFleCount = 0;
+    if (post != null && post.PostFiles != null)
+    {
+        foreach (PostFile file in post.PostFiles)
+        {
+            if (file.Type == PostFileType.Photo) { postImgCount += 1; }
+            else if (file.Type == PostFileType.Video) { postVdoCount += 1; }
+            else if (file.Type == PostFileType.Audio) { postAdoCount += 1; }
+            else if (file.Type != PostFileType.Cover) { postFleCount += 1; }
+        }
+    }
+    // Get registration fields...
+    List<PostClaim> registrationFields = post?.GetClaims(PostClaimType.RegistrationField)?.ToList();
+    string registrationField = ((registrationFields?.Count ?? 0) > 0
+        && string.IsNullOrWhiteSpace(registrationFields[0]?.StringValue) == false) ? registrationFields[0].StringValue : null;
+}
+
+@section head {
+    <style type="text/css">
+        .hndle{z-index:10;font-family:Arial;font-size:12px;font-weight:bold;color:#853008;line-height: 20px;text-align: left;margin: 10px 0px 0px 0px;border-bottom: #853008 dotted  1px;}
+    </style>
+    <link rel='stylesheet prefetch' href='/lib/angular-material.min.css'>
+    <link rel="stylesheet" href="/lib/material-docs.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+}
+
+<section class="blog-wrapper">
+    <div class="container">
+        <div id="content" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                <div class="blog-masonry">
+                    <div class="col-lg-12">
+                        <div class="blog-carousel">
+                            @if (post != null)
+                            {
+                                <div class="blog-carousel-header">
+                                    <div class="blog-carousel-meta">
+                                        <span><i class="fa fa-rss"></i> @post.GetPublicationDate()</span>
+                                        <span style="font-style:italic;"><i class="fa fa-globe"></i> @post.GetRegionsAsString(appctx)</span>
+                                    </div>
+                                </div>
+                                <div class="blog-carousel-desc">
+                                    @if (post.StartDate != null)
+                                    {
+                                    <div class="row" style="margin-top:20px;margin-bottom:20px;">
+                                        <div class="col-lg-12">
+                                            <table>
+                                                <tr valign="top">
+                                                    <td><i class="fa fa-calendar fa-4x"></i></td>
+                                                    <td><div class="row" style="margin: 10px;">
+                                                        <div class="col-lg-12" style="padding:0px;">
+                                                            <b>Du</b> :&nbsp;@post.GetStartDate(true)<br />
+                                                            <b>Au</b> :&nbsp;@post.GetEndDate(true)<br />
+                                                        </div>
+                                                        @if (post.HasInscription() == true && registrationField != null)
+                                                        {
+                                                        <ul class="recent_posts_widget" style="padding-left: 20px;">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+                                                                    style="font-family: Ubuntu, Helvetica; color: white; padding: 0px 25px; background-color: #4dA2D8; text-align: center; vertical-align: middle; display: inline-block; border-radius: 6px;margin-top:10px;margin-bottom:30px;">
+                                                                <div style="display: table; height: 45px; width:100%;">
+                                                                    <div style="display: table-cell; vertical-align: middle;">
+                                                                        <div style="font-family: Ubuntu, Helvetica; display: inline-block; text-align: center; font-size: 13px; vertical-align: middle; color: rgb(255, 255, 255);">
+                                                                            <a href="@this.Context.Request.Path.Value?.ToLower()?.Replace("pt", "preg")" target="_top">
+                                                                                <b>S'inscrire</b>
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div><!-- end col-sm-3 -->
+                                                        </ul>
+                                                        @*
+                                                        <div ng-app="MyApp" ng-controller="AppCtrl" ng-cloak="" md-theme="blue"
+                                                             class="col-lg-12 container dialogdemoThemeInheritance">
+                                                            <md-button class="md-primary md-raised" ng-click="showAdvanced($event)">S'inscrire</md-button>
+                                                            <script type="text/ng-template" id="dialog1.tmpl.html">
+                                                                <md-dialog aria-label="Mango (Fruit)" flex="{{fullScreen}}">
+                                                                    <form ng-cloak>
+                                                                        <md-toolbar>
+                                                                            <div class="md-toolbar-tools">
+                                                                                <h1 style="color:white;">Inscription: @post.GetTitle(70)</h1>
+                                                                                <span flex></span>
+                                                                                <md-button class="md-icon-button" ng-click="cancel()">
+                                                                                    <md-icon md-svg-src="/lib/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+                                                                                </md-button>
+                                                                            </div>
+                                                                        </md-toolbar>
+                                                                        <md-dialog-content ng-if="SuccessMsg == null">
+                                                                            <div class="md-dialog-content">
+                                                                                <form name="projectForm">
+                                                                                    <div layout-gt-sm="column" ng-repeat="field in fields">
+                                                                                        <div layout="column" flex="100">
+                                                                                            <blockquote>
+                                                                                                <div layout="column" flex>
+                                                                                                    <md-input-container ng-if="field.Type == 1" class="md-block" flex-gt-sm flex="100" md-is-error="field.IsError">
+                                                                                                        <label ng-bind="field.Title"></label>
+                                                                                                        <textarea required ng-model="field.Value" rows="2" md-select-on-focus></textarea>
+                                                                                                    </md-input-container>
+                                                                                                    <md-input-container ng-if="field.Type == 2" class="md-block" flex-gt-sm flex="100" md-is-error="field.IsError">
+                                                                                                        <label ng-bind="field.Title"></label>
+                                                                                                        <md-select required ng-model="field.Value">
+                                                                                                            <md-option value="Oui">Oui</md-option>
+                                                                                                            <md-option value="Non">Non</md-option>
+                                                                                                        </md-select>
+                                                                                                    </md-input-container>
+                                                                                                    <md-input-container ng-if="field.Type == 3" class="md-block" flex-gt-sm flex="100" md-is-error="field.IsError">
+                                                                                                        <label ng-bind="field.Title"></label>
+                                                                                                        <md-select required ng-model="field.Value">
+                                                                                                            <md-option value="Oui">Oui</md-option>
+                                                                                                            <md-option value="Non">Non</md-option>
+                                                                                                        </md-select>
+                                                                                                    </md-input-container>
+                                                                                                    <md-input-container ng-if="field.Type == 3 && field.Value == 'Oui'" class="md-block" flex-gt-sm flex="100" md-is-error="field.IsError2">
+                                                                                                        <label ng-bind="field.Details"></label>
+                                                                                                        <textarea required ng-model="field.Value2" rows="2" md-select-on-focus></textarea>
+                                                                                                    </md-input-container>
+                                                                                                    <md-input-container ng-if="field.Type == 4 || field.Type == 5" class="md-block" flex-gt-sm flex="100" md-is-error="field.IsError">
+                                                                                                        <label ng-bind="field.Title"></label>
+                                                                                                        <md-select required ng-model="field.Value">
+                                                                                                            <md-option ng-repeat="choose in field.Choose" value="{{choose}}">
+                                                                                                                {{choose}}
+                                                                                                            </md-option>
+                                                                                                        </md-select>
+                                                                                                    </md-input-container>
+                                                                                                    <md-input-container ng-if="field.Type == 5" class="md-block" flex-gt-sm flex="100" md-is-error="field.IsError2">
+                                                                                                        <label ng-bind="field.Title"></label>
+                                                                                                        <md-select required ng-model="field.Value2">
+                                                                                                            <md-option ng-repeat="choose2 in field.Choose2" value="{{choose2}}">
+                                                                                                                {{choose2}}
+                                                                                                            </md-option>
+                                                                                                        </md-select>
+                                                                                                    </md-input-container>
+                                                                                                    <span flex></span>
+                                                                                                </div>
+                                                                                            </blockquote>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </form>
+                                                                            </div>
+                                                                        </md-dialog-content>
+                                                                        <md-dialog-content ng-if="SuccessMsg != null">
+                                                                            <div class="md-dialog-content">
+                                                                                <div layout-gt-sm="column">
+                                                                                    <div layout="column" flex="100">
+                                                                                        <blockquote>
+                                                                                            <div layout="column" flex>
+                                                                                                <div style="color:green;" ng-bind-html="SuccessMsg"></div>
+                                                                                            </div>
+                                                                                        </blockquote>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </md-dialog-content>
+                                                                        <md-dialog-actions layout="row" ng-if="SuccessMsg == null">
+                                                                            <md-progress-linear ng-if="Sending == true" md-mode="indeterminate"></md-progress-linear>
+                                                                            <div ng-if="ErrorMsg != null" style="color:red;" ng-bind="ErrorMsg"></div>
+                                                                            <span flex></span>
+                                                                            <md-button ng-if="Sending == false" ng-click="answer('useful')" class="md-primary">
+                                                                                Envoyer la fiche d'inscription
+                                                                            </md-button>
+                                                                        </md-dialog-actions>
+                                                                    </form>
+                                                                </md-dialog>
+                                                            </script>
+                                                        </div>
+                                                        *@
+                                                        }
+                                                    </div></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    }
+                                    <div class="row" style="margin-top:20px;margin-bottom:20px;">
+                                        <div class="col-lg-12">
+                                            @*<img  style="width:300px;margin:0px 10px 10px 10px;background-color:#fff;padding:2px;border:1px solid #ccc;" src="@post.GetCoverUrl()" alt="...">*@
+                                            <p>@Html.Raw(post.GetText())</p>
+                                        </div>
+                                    </div>
+                                    @if (postFleCount != 0)
+                                    {
+                                    <div class="row" style="margin-top:20px;margin-bottom:20px;">
+                                        <div class="col-lg-12">
+                                            <ul class="recent_posts_widget">
+                                                <li class="calloutbox" style="padding-top:0px;padding-bottom:0px;">
+                                                    <div class="col-lg-12" style="padding-left:0px;">
+                                                    <p class="lead">
+                                                    <h3 style="color:white;"><i class="fa fa-file"></i> Fichiers</h3>
+                                                    </p>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                            <table class="table table-striped" style="margin-top:20px;">
+                                                <tbody>
+                                                    @foreach (PostFile file in post.PostFiles)
+                                                    {
+                                                        if (file.Type != PostFileType.Cover)
+                                                        {
+                                                            <tr><td><i class="fa fa-caret-right"></i> <a href="@post.GetFileUrl(file)">@Html.Raw(file.Title)</a></td></tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    }
+                                    @if ((postVdoCount + postAdoCount) != 0)
+                                    {
+                                    <div class="row" style="margin-top:20px;margin-bottom:20px;">
+                                        <div class="col-lg-12">
+                                            <ul class="recent_posts_widget">
+                                                <li class="calloutbox" style="padding-top:0px;padding-bottom:0px;">
+                                                    <div class="col-lg-12" style="padding-left:0px;">
+                                                        <p class="lead">
+                                                            <h3 style="color:white;"><i class="fa fa-film"></i> Audio & Vidéo</h3>
+                                                        </p>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                            <div style="margin-top:20px;">
+                                                @foreach (PostFile file in post.PostFiles)
+                                                {
+                                                    <div class="col-lg-12">
+                                                        @if (file.Type == PostFileType.Video)
+                                                        {
+                                                            if (file.Url != null && file.Url.Contains("youtube") == true)
+                                                            {
+                                                                <iframe width="100%" height="400px" src="@post.GetFileUrl(file)"></iframe>
+                                                            }
+                                                            else
+                                                            {
+                                                                <video style="width:100%" height="auto" controls>
+                                                                    <source src="@post.GetFileUrl(file)">
+                                                                    <a href="@post.GetFileUrl(file)">Download</a>
+                                                                </video>
+                                                            }
+                                                        }
+                                                        else if (file.Type == PostFileType.Audio)
+                                                        {
+                                                            <audio style="width:100%" height="auto" controls>
+                                                                <source src="@post.GetFileUrl(file)">
+                                                                <a href="@post.GetFileUrl(file)">Download</a>
+                                                            </audio>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    }
+                                    @if (postImgCount != 0)
+                                    {
+                                    <div class="row" style="margin-top:20px;margin-bottom:20px;">
+                                        <div class="col-lg-12">
+                                            <div id="submitdiv" class="postbox ">
+                                                <ul class="recent_posts_widget">
+                                                    <li class="calloutbox" style="padding-top:0px;padding-bottom:0px;">
+                                                        <div class="col-lg-12" style="padding-left:0px;">
+                                                            <p class="lead">
+                                                                <h3 style="color:white;"><i class="fa fa-picture-o"></i> Photos</h3>
+                                                            </p>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                <div id="boxed-portfolio" class="portfolio_wrapper padding-top">
+                                                    @foreach (PostFile file in post.PostFiles)
+                                                    {
+                                                        if (file.Type == PostFileType.Photo)
+                                                        {
+                                                            <img class="overlay-figure overlay-scale" src="@post.GetFileUrl(file)" alt="@file.Title" style="width:100%">
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    @*
+    <script type="text/javascript">
+        //pretty photo
+        jQuery('a[data-gal]').each(function() {
+            jQuery(this).attr('rel', jQuery(this).data('gal'));
+        });  	
+        jQuery("a[data-gal^='prettyPhoto']").prettyPhoto({animationSpeed:'slow',slideshow:false,overlay_gallery: false,theme:'light_square',social_tools:false,deeplinking:false});
+    </script>
+
+    <script src="/lib/angular.min.js"></script>
+    <script src="/lib/angular-sanitize.js"></script>
+    <script src="/lib/angular-cookies.js"></script>
+    <script src="/lib/angular-animate.min.js"></script>
+    <script src="/lib/angular-aria.min.js"></script>-->
+    <script src="/lib/angular-messages.min.js"></script>
+    <script src="/lib/angular-ui-router.min.js"></script>
+    <script src="/lib/angular-animate.min.js"></script>
+    <script src="/lib/angular-route.min.js"></script>
+    <script src="/lib/angular-locale_fr-fr.js"></script>
+    <script src="/lib/angular-material.min.js"></script>
+
+    <script type="text/javascript">
+        angular.module('MyApp', ['ngMaterial', 'ngSanitize', 'ngMessages'/*, 'material.svgAssetsCache'*/])
+            .config(function ($mdThemingProvider) {
+                $mdThemingProvider.theme('red').primaryPalette('red');
+                $mdThemingProvider.theme('blue').primaryPalette('blue');
+            })
+            .controller('AppCtrl', function ($scope, $mdDialog, $interval, $http, $log) {
+                //$interval(function () {}, 2000);
+                $scope.showAdvanced = function (ev) {
+                    $mdDialog.show({
+                        controller: DialogController,
+                        templateUrl: 'dialog1.tmpl.html',
+                        parent: angular.element(document.body),
+                        targetEvent: ev,
+                        clickOutsideToClose: false
+                    })/*
+                        .then(function (answer) {
+                            $scope.status = 'You said the information was "' + answer + '".';
+                        }, function () {
+                            $scope.status = 'You cancelled the dialog.';
+                        })*/;
+                };
+                function DialogController($scope, $mdDialog, $mdMedia) {
+                    $scope.Sending = false;
+                    $scope.SuccessMsg = null;
+                    $scope.ErrorMsg = null;
+                    $scope.fields =
+                    @if (registrationField != null) { @Html.Raw(registrationField) }
+                    else { @Html.Raw("null") }
+                    @Html.Raw(";\r\n")
+                    $scope.hide = function () {
+                        $mdDialog.hide();
+                    };
+                    $scope.cancel = function () {
+                        $mdDialog.cancel();
+                    };
+                    $scope.answer = function (answer) {
+                        $scope.ErrorMsg = null;
+                        // Check inputs...
+                        if ($scope.fields != null) {
+                            var notGood = false;
+                            for (var i = 0; i < $scope.fields.length; i++) {
+                                $log.debug($scope.fields[i]);
+                                $scope.fields[i].IsError = false;
+                                $scope.fields[i].IsError2 = false;
+                                if ($scope.fields[i].Type == 1) {
+                                    // Text area...
+                                    if ($scope.fields[i].Value == null || $scope.fields[i].Value == "") {
+                                        notGood = true;
+                                        $scope.fields[i].IsError = true;
+                                    }
+                                }
+                                else if ($scope.fields[i].Type == 2) {
+                                    // Oui\non...
+                                    if ($scope.fields[i].Value == null || $scope.fields[i].Value == "") {
+                                        notGood = true;
+                                        $scope.fields[i].IsError = true;
+                                    }
+                                }
+                                else if ($scope.fields[i].Type == 3) {
+                                    // Oui\non - Precisez...
+                                    if ($scope.fields[i].Value == null || $scope.fields[i].Value == "") {
+                                        notGood = true;
+                                        $scope.fields[i].IsError = true;
+                                    }
+                                    else if ($scope.fields[i].Value == "Oui"
+                                        && ($scope.fields[i].Value2 == null || $scope.fields[i].Value2 == "")) {
+                                        notGood = true;
+                                        $scope.fields[i].IsError2 = true;
+                                    }
+                                }
+                                if ($scope.fields[i].Type == 4 || $scope.fields[i].Type == 5) {
+                                    // Choix 1...
+                                    if ($scope.fields[i].Value == null || $scope.fields[i].Value == "") {
+                                        notGood = true;
+                                        $scope.fields[i].IsError = true;
+                                    }
+                                }
+                                if ($scope.fields[i].Type == 5) {
+                                    // Choix 2...
+                                    if ($scope.fields[i].Value2 == null || $scope.fields[i].Value2 == "") {
+                                        notGood = true;
+                                        $scope.fields[i].IsError2 = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (notGood == true) {
+                            $scope.ErrorMsg = "Veuillez remplir tous les champs obligatoires!";
+                        }
+                        else {
+                            post();
+                            //$mdDialog.hide(answer);
+                        }
+                    };
+                    $scope.fullScreen = ($mdMedia('xs') || $mdMedia('sm')) ? 100 : 80;
+
+                    function post() {
+                        $scope.Sending = true;
+                        var path = '/api/post/inscription/@post.Id';
+                        $log.debug('Post inscription details:', $scope.fields, 'to', path);
+
+                        return $http.post(path, $scope.fields)
+                            .then(getComplete)
+                            .catch(getFailed);
+
+                        function getComplete(response) {
+                            $log.debug('Inscription details post: response=', response);
+                            if (response.data == null || response.data == "" || response.data.Error != null) {
+                                $scope.Sending = false;
+                                $scope.SuccessMsg = null;
+                                $scope.ErrorMsg = "Une erreur s'est produite veuillez réessayer ultérieurement!";
+                            }
+                            else {
+                                $log.debug('data=', response.data);
+                                $scope.Sending = false;
+                                $scope.SuccessMsg = response.data;
+                                $scope.ErrorMsg = null;
+                            }
+                        }
+                        function getFailed(error) {
+                            $log.error('Failed to post inscription details: ' + error.data);
+                            $scope.Sending = false;
+                            $scope.SuccessMsg = null;
+                            $scope.ErrorMsg = "Une erreur s'est produite veuillez réessayer ultérieurement!";
+                        }
+                    }
+                }
+            });
+    </script>
+     *@
+}
+
+@{
+    //Console.WriteLine("+++ Vep:Post:Post.cshtml: END.");
+}

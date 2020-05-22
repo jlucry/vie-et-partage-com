@@ -1,0 +1,139 @@
+﻿@using Models;
+@using Services;
+@using System.Net;
+@{
+    //Console.WriteLine("+++ Vep:_NavPartial...");
+
+    //int parentid = (int)ViewData["parentid"]; - Not needed
+    int[] idExcluded = { 7, 8, 9, 17, 18, 18, 22 };
+    // Get app context...
+    WcmsAppContext appctx = (WcmsAppContext)ViewContext.RouteData.Values["appcontext"];
+    // Region url...
+    string regionuri = $"/{Framework.String.RemoveAccents(appctx?.Region?.StringValue).ToLower()}";
+    // Get page provider...
+    PageProvider provider = new PageProvider(appctx);
+    // Get root pages...
+    IEnumerable<Page> pages = await provider?.Get(true, null);
+    //Console.WriteLine("+++ Vep:_NavPartial; {0} pages...", pages?.Count() ?? 0);
+}
+
+<ul class="nav navbar-nav">
+    @if (pages != null)
+    {
+        // Process root pages...
+        foreach (Page pageItem in pages)
+        {
+            if (pageItem != null
+                && pageItem.PositionInNavigation != 0
+                && idExcluded.Contains(pageItem.Id) == false
+                && (appctx.Region != null || pageItem.Region1 == 0))
+            {
+                string itemUrl = pageItem.GetUrl(appctx);
+                if (string.IsNullOrWhiteSpace(itemUrl) == true)
+                {
+                    itemUrl = "javascript:void(0)";
+                }
+                // Get childs pages...
+                IEnumerable<Page> childs = await provider?.Get(true, pageItem.Id);
+                if (childs == null || childs.Count() == 0)
+                {
+                    // No childs...
+                    <li><a href="@itemUrl">@pageItem.Title</a></li>
+                }
+                else
+                {
+                    // We have childs pages...
+                    if (pageItem.Id == 1)
+                    {
+                        <li class="dropdown">
+                            <a href="@itemUrl" data-toggle="dropdown" class="dropdown-toggle">@pageItem.Title <div class="arrow-up"></div></a>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach (Page child in childs)
+                                {
+                                    if (child != null
+                                        && child.PositionInNavigation != 0
+                                        && idExcluded.Contains(child.Id) == false
+                                        && (appctx.Region != null || child.Region1 == 0))
+                                    {
+                                        string childUrl = child.GetUrl(appctx);
+                                        <li><a href="@childUrl">@child.Title</a></li>
+                                    }
+                                }
+                            </ul>
+                        </li>
+                    }
+                    else if (pageItem.Id == 4)
+                    {
+                        // Process Vep root page (1) and Egl root page (4)...
+                        <li class="dropdown yamm-fw">
+                            <a href="@itemUrl" data-toggle="dropdown" class="dropdown-toggle">@Html.Raw(WebUtility.HtmlDecode(pageItem.Title)) <div class="arrow-up"></div></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <div class="yamm-content">
+                                        <div class="row">
+                                            <ul class="col-lg-4 col-md-4 @((pageItem.Id == 1) ? "hidden-sm hidden-xs" : "col-sm-6 col-xs-12")">
+                                                <li style="border:none;"><h3><i class="fa fa-check"></i> Textes fondamentaux</h3></li>
+                                                <li><a href="http://www.topchretien.com/topbible/view/bible/">La Sainte Bible</a></li>
+                                                <li><a href="http://www.vatican.va/archive/FRA0013/_INDEX.HTM">Catéchisme de l'Église Catholique</a></li>
+                                                <li><a href="http://www.vatican.va/archive/compendium_ccc/documents/archive_2005_compendium-ccc_fr.html">Compendium</a></li>
+                                                <li><a href="http://www.vatican.va/archive/FRA0037/_INDEX.HTM">Code de Droit Canonique</a></li>
+                                                <li><a href="http://www.vatican.va/archive/hist_councils/ii_vatican_council/index_fr.htm">Concile Vatican II</a></li>
+                                            </ul>
+                                            <ul class="col-lg-4 col-md-4 @((pageItem.Id == 1) ? "col-sm-12 col-xs-12" : "col-sm-6 col-xs-12")">
+                                                <li style="border:none;"><h3><i class="fa fa-check"></i> @Html.Raw(WebUtility.HtmlDecode(pageItem.Title))</h3></li>
+                                                @foreach (Page child in childs)
+                                                {
+                                                    if (child != null
+                                                        && child.PositionInNavigation != 0
+                                                        && idExcluded.Contains(child.Id) == false)
+                                                    {
+                                                        string childUrl = child.GetUrl(appctx);
+                                                        <li><a href="@childUrl">@child.Title</a></li>
+                                                    }
+                                                }
+                                            </ul>
+                                            <ul class="col-lg-4 col-md-4 hidden-sm hidden-xs">
+                                                <li style="border:none;"><h3><i class="fa fa-check"></i> Liens</h3></li>
+                                                <li><a href="http://www.news.va/fr">News.va</a></li>
+                                                <li><a href="http://w2.vatican.va/content/vatican/fr.html">Le Saint-Siège</a></li>
+                                                <li><a href="http://www.eglise.catholique.fr/accueil.html">Conférence des évêques de France</a></li>
+                                                <li><a href="http://levangileauquotidien.org/presentation/FR/">L'Evangile au Quotidien</a></li>
+                                                <li><a href="http://egliseinfo.catholique.fr/">Messe Info</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="dropdown">
+                            <a href="@itemUrl" data-toggle="dropdown" class="dropdown-toggle">@pageItem.Title <div class="arrow-up"></div></a>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach (Page child in childs)
+                                {
+                                    if (child != null
+                                        && child.PositionInNavigation != 0
+                                        && idExcluded.Contains(child.Id) == false)
+                                    {
+                                        string childUrl = child.GetUrl(appctx);
+                                        <li class="dropdown-submenu">
+                                            <a href="@childUrl">@child.Title</a>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </li>
+                    }
+                }
+            }
+        }
+    }
+</ul>
+
+@{
+    //Console.WriteLine("+++ Vep:_NavPartial: END.");
+    // Trace performance...
+    appctx?.AddPerfLog("Vep\\Views\\Shared\\_NavPartial.cshtml");
+}

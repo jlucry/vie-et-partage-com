@@ -1,0 +1,1008 @@
+﻿@using Models;
+@using Services;
+@{
+    // Get app context...
+    WcmsAppContext appctx = (WcmsAppContext)ViewContext.RouteData.Values["appcontext"];
+}
+
+@section head {
+}
+<div class="sliderwrapper clearfix hidden-sm hidden-xs">
+    <div class="tp-banner-container">
+        <div class="tp-banner">
+            <ul>
+                <li data-transition="fade" data-slotamount="7" data-masterspeed="1500" data-delay="10000">
+                    <img src="/theme/jollyany/images/vep/slider1.jpg" alt="slidebg1" data-bgfit="cover" data-bgposition="left bottom" data-bgrepeat="no-repeat">
+                    <div class="tp-caption customin"
+                         data-x="center" data-hoffset="0"
+                         data-y="-150"
+                         data-customin="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0;scaleY:0;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="500"
+                         data-start="1000"
+                         data-easing="Power3.easeInOut"
+                         data-endspeed="300"
+                         style="z-index: 4">
+                        <img src="/theme/jollyany/images/logo2.png" alt="">
+                    </div>
+                    <div class="tp-caption small_thin_grey1 customin customout" style="font-size:20px"
+                         data-x="85"
+                         data-y="370"
+                         data-customin="x:0;y:100;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:1;scaleY:3;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:0% 0%;"
+                         data-customout="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0.75;scaleY:0.75;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="500"
+                         data-start="1300"
+                         data-easing="Power4.easeOut"
+                         data-endspeed="500"
+                         data-endeasing="Power4.easeIn"
+                         data-captionhidden="on"
+                         style="z-index: 8">
+                        <span><i class="fa fa-globe"></i></span><b><a href="/bordeaux">BORDEAUX</a></b>
+                    </div>
+                    <div class="tp-caption small_thin_grey1 customin customout" style="font-size:20px"
+                         data-x="390"
+                         data-y="370"
+                         data-customin="x:0;y:100;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:1;scaleY:3;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:0% 0%;"
+                         data-customout="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0.75;scaleY:0.75;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="500"
+                         data-start="1400"
+                         data-easing="Power4.easeOut"
+                         data-endspeed="500"
+                         data-endeasing="Power4.easeIn"
+                         data-captionhidden="on"
+                         style="z-index: 8">
+                        <span><i class="fa fa-globe"></i></span><b><a href="/guadeloupe">GUADELOUPE</a></b>
+                    </div>
+                    <div class="tp-caption small_thin_grey1 customin customout" style="font-size:20px"
+                         data-x="685"
+                         data-y="370"
+                         data-customin="x:0;y:100;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:1;scaleY:3;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:0% 0%;"
+                         data-customout="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0.75;scaleY:0.75;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="500"
+                         data-start="1500"
+                         data-easing="Power4.easeOut"
+                         data-endspeed="500"
+                         data-endeasing="Power4.easeIn"
+                         data-captionhidden="on"
+                         style="z-index: 8">
+                        <span><i class="fa fa-globe"></i></span><b><a href="/guyane">GUYANE</a></b>
+                    </div>
+                    <div class="tp-caption small_thin_grey1 customin customout" style="font-size:20px"
+                         data-x="950"
+                         data-y="370"
+                         data-customin="x:0;y:100;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:1;scaleY:3;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:0% 0%;"
+                         data-customout="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0.75;scaleY:0.75;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="500"
+                         data-start="1600"
+                         data-easing="Power4.easeOut"
+                         data-endspeed="500"
+                         data-endeasing="Power4.easeIn"
+                         data-captionhidden="on"
+                         style="z-index: 8">
+                        <span><i class="fa fa-globe"></i></span><b><a href="/marseille">MARSEILLE</a></b>
+                    </div>
+                    <div class="tp-caption small_thin_grey1 customin customout" style="font-size:20px"
+                         data-x="250"
+                         data-y="450"
+                         data-customin="x:0;y:100;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:1;scaleY:3;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:0% 0%;"
+                         data-customout="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0.75;scaleY:0.75;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="500"
+                         data-start="1700"
+                         data-easing="Power4.easeOut"
+                         data-endspeed="500"
+                         data-endeasing="Power4.easeIn"
+                         data-captionhidden="on"
+                         style="z-index: 8">
+                        <span><i class="fa fa-globe"></i></span><b><a href="/martinique">MARTINIQUE</a></b>
+
+                    </div>
+                    <div class="tp-caption small_thin_grey1 customin customout" style="font-size:20px"
+                         data-x="570"
+                         data-y="450"
+                         data-customin="x:0;y:100;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:1;scaleY:3;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:0% 0%;"
+                         data-customout="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0.75;scaleY:0.75;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="500"
+                         data-start="1800"
+                         data-easing="Power4.easeOut"
+                         data-endspeed="500"
+                         data-endeasing="Power4.easeIn"
+                         data-captionhidden="on"
+                         style="z-index: 8">
+                        <span><i class="fa fa-globe"></i></span><b><a href="/paris">PARIS</a></b>
+                    </div>
+                    <div class="tp-caption small_thin_grey1 customin customout" style="font-size:20px"
+                         data-x="800"
+                         data-y="450"
+                         data-customin="x:0;y:100;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:1;scaleY:3;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:0% 0%;"
+                         data-customout="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0.75;scaleY:0.75;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="500"
+                         data-start="1900"
+                         data-easing="Power4.easeOut"
+                         data-endspeed="500"
+                         data-endeasing="Power4.easeIn"
+                         data-captionhidden="on"
+                         style="z-index: 8">
+                        <span><i class="fa fa-globe"></i></span><b><a href="/toulouse">TOULOUSE</a></b>
+                    </div>
+                </li>
+                <li data-transition="fade" data-slotamount="7" data-masterspeed="1500" data-delay="10000">
+                    <img src="/theme/jollyany/images/vep/slider1.jpg" alt="slidebg1" data-bgfit="cover" data-bgposition="left bottom" data-bgrepeat="no-repeat">
+                    <div class="tp-caption big_title_onepage skewfromleft customout"
+                         data-x="center" data-hoffset="0"
+                         data-y="00"
+                         data-customout="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0.75;scaleY:0.75;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="800"
+                         data-start="1300"
+                         data-easing="Power4.easeOut"
+                         data-endspeed="300"
+                         data-endeasing="Power1.easeIn"
+                         data-captionhidden="on"
+                         style="z-index: 6">
+                        Retraites et pèlerinages
+                    </div>
+                    <div class="tp-caption small_thin_grey1 customin customout" style="font-size:20px"
+                         data-x="85"
+                         data-y="370"
+                         data-customin="x:0;y:100;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:1;scaleY:3;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:0% 0%;"
+                         data-customout="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0.75;scaleY:0.75;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="500"
+                         data-start="1300"
+                         data-easing="Power4.easeOut"
+                         data-endspeed="500"
+                         data-endeasing="Power4.easeIn"
+                         data-captionhidden="on"
+                         style="z-index: 8">
+                        <span><i class="fa fa-calendar"></i></span><b><a href="/bordeaux/retraites-et-pelerinages/pg10">BORDEAUX</a></b>
+                    </div>
+                    <div class="tp-caption small_thin_grey1 customin customout" style="font-size:20px"
+                         data-x="390"
+                         data-y="370"
+                         data-customin="x:0;y:100;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:1;scaleY:3;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:0% 0%;"
+                         data-customout="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0.75;scaleY:0.75;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="500"
+                         data-start="1400"
+                         data-easing="Power4.easeOut"
+                         data-endspeed="500"
+                         data-endeasing="Power4.easeIn"
+                         data-captionhidden="on"
+                         style="z-index: 8">
+                        <span><i class="fa fa-calendar"></i></span><b><a href="/guadeloupe/retraites-et-pelerinages/pg10">GUADELOUPE</a></b>
+                    </div>
+                    <div class="tp-caption small_thin_grey1 customin customout" style="font-size:20px"
+                         data-x="685"
+                         data-y="370"
+                         data-customin="x:0;y:100;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:1;scaleY:3;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:0% 0%;"
+                         data-customout="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0.75;scaleY:0.75;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="500"
+                         data-start="1500"
+                         data-easing="Power4.easeOut"
+                         data-endspeed="500"
+                         data-endeasing="Power4.easeIn"
+                         data-captionhidden="on"
+                         style="z-index: 8">
+                        <span><i class="fa fa-calendar"></i></span><b><a href="/guyane/retraites-et-pelerinages/pg10">GUYANE</a></b>
+                    </div>
+                    <div class="tp-caption small_thin_grey1 customin customout" style="font-size:20px"
+                         data-x="950"
+                         data-y="370"
+                         data-customin="x:0;y:100;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:1;scaleY:3;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:0% 0%;"
+                         data-customout="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0.75;scaleY:0.75;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="500"
+                         data-start="1600"
+                         data-easing="Power4.easeOut"
+                         data-endspeed="500"
+                         data-endeasing="Power4.easeIn"
+                         data-captionhidden="on"
+                         style="z-index: 8">
+                        <span><i class="fa fa-calendar"></i></span><b><a href="/marseille/retraites-et-pelerinages/pg10">MARSEILLE</a></b>
+                    </div>
+                    <div class="tp-caption small_thin_grey1 customin customout" style="font-size:20px"
+                         data-x="250"
+                         data-y="450"
+                         data-customin="x:0;y:100;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:1;scaleY:3;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:0% 0%;"
+                         data-customout="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0.75;scaleY:0.75;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="500"
+                         data-start="1700"
+                         data-easing="Power4.easeOut"
+                         data-endspeed="500"
+                         data-endeasing="Power4.easeIn"
+                         data-captionhidden="on"
+                         style="z-index: 8">
+                        <span><i class="fa fa-calendar"></i></span><b><a href="/martinique/retraites-et-pelerinages/pg10">MARTINIQUE</a></b>
+                    </div>
+                    <div class="tp-caption small_thin_grey1 customin customout" style="font-size:20px"
+                         data-x="570"
+                         data-y="450"
+                         data-customin="x:0;y:100;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:1;scaleY:3;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:0% 0%;"
+                         data-customout="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0.75;scaleY:0.75;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="500"
+                         data-start="1800"
+                         data-easing="Power4.easeOut"
+                         data-endspeed="500"
+                         data-endeasing="Power4.easeIn"
+                         data-captionhidden="on"
+                         style="z-index: 8">
+                        <span><i class="fa fa-calendar"></i></span><b><a href="/paris/retraites-et-pelerinages/pg10">PARIS</a></b>
+                    </div>
+                    <div class="tp-caption small_thin_grey1 customin customout" style="font-size:20px"
+                         data-x="800"
+                         data-y="450"
+                         data-customin="x:0;y:100;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:1;scaleY:3;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:0% 0%;"
+                         data-customout="x:0;y:0;z:0;rotationX:0;rotationY:0;rotationZ:0;scaleX:0.75;scaleY:0.75;skewX:0;skewY:0;opacity:0;transformPerspective:600;transformOrigin:50% 50%;"
+                         data-speed="500"
+                         data-start="1900"
+                         data-easing="Power4.easeOut"
+                         data-endspeed="500"
+                         data-endeasing="Power4.easeIn"
+                         data-captionhidden="on"
+                         style="z-index: 8">
+                        <span><i class="fa fa-calendar"></i></span><b><a href="/toulouse/retraites-et-pelerinages/pg10">TOULOUSE</a></b>
+                    </div>
+                </li>
+            </ul>
+            <div class="tp-bannertimer tp-bottom"></div>
+        </div>
+    </div>
+</div>
+<header id="header-style-1">
+    <div class="container visible-sm visible-xs">
+        <nav class="navbar yamm navbar-default">
+            <div class="navbar-header">
+                <a href="/" class="navbar-brand">Vie et Partage</a>
+            </div>
+        </nav>
+    </div>
+</header>
+<section class="white-wrapper hidden-sm hidden-xs">
+    <div class="container">
+        <div class="services_vertical">
+            <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 first">
+                <div class="service_vertical_box">
+                    <div class="service-icon">
+                        <a href="/presentation/pg7"><i class="fa fa-lightbulb-o fa-4x"></i></a>
+                    </div>
+                    <h3><a href="/presentation/pg7">Présentation</a></h3>
+                    <p><a href="/presentation/pg7" style="color:#686868;">Le groupe Vie et Partage est une association de fidèles créée en 2000 pour répondre à la soif chez les fidèles catholiques d’une catéchèse vivante.</a></p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                <div class="service_vertical_box">
+                    <div class="service-icon">
+                        <a href="/motduberger/pg8"><i class="fa fa-user fa-4x"></i></a>
+                    </div>
+                    <h3><a href="/motduberger/pg8">Mot du moderateur</a></h3>
+                    <p><a href="/motduberger/pg8" style="color:#686868;">Comment est née l’idée de ce groupe Vie et Partage ? Pour répondre à cette question il est bon de connaître ceux qui en ont eu l’initiative.</a></p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12 last">
+                <div class="service_vertical_box">
+                    <div class="service-icon">
+                        <a href="/activites/pg9"><i class="fa fa-tablet fa-4x"></i></a>
+                    </div>
+                    <h3><a href="/activites/pg9">Nos activités</a></h3>
+                    <p><a href="/activites/pg9" style="color:#686868;">Le mouvement a pour objectif de raviver la foi des baptisés et accorde une importance fondamentale à la rencontre personnelle avec Jésus-Christ.</a></p>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</section>
+<section class="grey-wrapper jt-shadow">
+    <div class="container">
+        <div class="general-title hidden-sm hidden-xs">
+            <h3>Nos régions</h3>
+            <hr />
+        </div>
+        <div class="padding-top text-center">
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                <div class="team_member">
+                    <div class="entry">
+                        <a class="sf" rel="bookmark" href="/bordeaux"><img class="img-responsive" src="/theme/jollyany/images/vep/bordeaux.jpg" alt=""></a>
+                    </div>
+                    <h3><a href="/bordeaux">Bordeaux</a></h3>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                <div class="team_member">
+                    <div class="entry">
+                        <a class="sf" rel="bookmark" href="/guadeloupe"><img class="img-responsive" src="/theme/jollyany/images/vep/guadeloupe.jpg" alt=""></a>
+                    </div>
+                    <h3><a href="/guadeloupe">Guadeloupe</a></h3>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                <div class="team_member">
+                    <div class="entry">
+                        <a class="sf" rel="bookmark" href="/guyane"><img class="img-responsive" src="/theme/jollyany/images/vep/guyane.jpg" alt=""></a>
+                    </div>
+                    <h3><a href="/guyane">Guyane</a></h3>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                <div class="team_member">
+                    <div class="entry">
+                        <a class="sf" rel="bookmark" href="/marseille"><img class="img-responsive" src="/theme/jollyany/images/vep/marseille.jpg" alt=""></a>
+                    </div>
+                    <h3><a href="/marseille">Marseille</a></h3>
+                </div>
+            </div>
+        </div>
+        <div class="padding-top text-center">
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                <div class="team_member">
+                    <div class="entry">
+                        <a class="sf" rel="bookmark" href="/martinique"><img class="img-responsive" src="/theme/jollyany/images/vep/martinique.jpg" alt=""></a>
+                    </div>
+                    <h3><a href="/martinique">Martinique</a></h3>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                <div class="team_member">
+                    <div class="entry">
+                        <a class="sf" rel="bookmark" href="/paris"><img class="img-responsive" src="/theme/jollyany/images/vep/paris.jpg" alt=""></a>
+                    </div>
+                    <h3><a href="/paris">Paris</a></h3>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 ">
+                <div class="team_member">
+                    <div class="entry">
+                        <a class="sf" rel="bookmark" href="/toulouse"><img class="img-responsive" src="/theme/jollyany/images/vep/toulouse.jpg" alt=""></a>
+                    </div>
+                    <h3><a href="/toulouse">Toulouse</a></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="blog-wrapper">
+    <div class="container">
+        <div id="content" class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+
+            <div class="widget">
+                <div class="title">
+                    <h2>Latest Reviews</h2>
+                </div><!-- end title -->
+                <div class="row reviews_widget">
+                    <div class="col-sm-6">
+                        <div class="blog-carousel">
+                            <div class="entry">
+                                <img src="demos/lifestyle_06.jpg" alt="" class="img-responsive">
+                                <div class="magnifier">
+                                    <div class="buttons">
+                                        <a class="st" rel="bookmark" href="blog-single-sidebar.html"><i class="fa fa-link"></i></a>
+                                    </div><!-- end buttons -->
+                                </div><!-- end magnifier -->
+                                <div class="post-type">
+                                    <i class="fa fa-picture-o"></i>
+                                </div><!-- end pull-right -->
+                            </div><!-- end entry -->
+                            <div class="blog-carousel-header">
+                                <h3><a title="" href="blog-single-sidebar.html">New Graphic Designer on the block</a></h3>
+                                <div class="blog-carousel-meta">
+                                    <span><i class="fa fa-calendar"></i> April 01, 2014</span>
+                                    <span><i class="fa fa-comment"></i> <a href="#">03 Comments</a></span>
+                                    <span><i class="fa fa-eye"></i> <a href="#">84 Views</a></span>
+                                </div><!-- end blog-carousel-meta -->
+                            </div><!-- end blog-carousel-header -->
+                            <div class="blog-carousel-desc">
+                                <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra. Aenean vel faucibus nunc, et venenatis magna. In hac habitasse platea dictumst. </p>
+                            </div><!-- end blog-carousel-desc -->
+                        </div><!-- end blog-carousel -->
+                    </div><!-- end col-sm-6 -->
+                    <div class="col-sm-6">
+                        <div class="widget">
+                            <ul class="recent_posts_widget">
+                                <li>
+                                    <a href="#"><img src="demos/tabbed_widget_01.jpg" alt="" />Android Toy Restyled...</a>
+                                    <p>Aenean vel faucibus nunc, et venenatis magna... </p>
+                                    <div class="meta_widget">
+                                        <div class="pull-left">
+                                            <a class="readmore" href="#">Feburay 16, 2013</a>
+                                        </div>
+                                        <div class="pull-right">
+                                            <div class="rating">
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star-o"></i>
+                                            </div><!-- rating -->
+                                        </div>
+                                    </div><!-- end meta_widget -->
+                                </li>
+                                <li>
+                                    <a href="#"><img src="demos/tabbed_widget_02.jpg" alt="" />Android Toy Restyled...</a>
+                                    <p>Aenean vel faucibus nunc, et venenatis magna... </p>
+                                    <div class="meta_widget">
+                                        <div class="pull-left">
+                                            <a class="readmore" href="#">Feburay 16, 2013</a>
+                                        </div>
+                                        <div class="pull-right">
+                                            <div class="rating">
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star-o"></i>
+                                            </div><!-- rating -->
+                                        </div>
+                                    </div><!-- end meta_widget -->
+                                </li>
+                                <li>
+                                    <a href="#"><img src="demos/tabbed_widget_03.jpg" alt="" />Android Toy Restyled...</a>
+                                    <p>Aenean vel faucibus nunc, et venenatis magna... </p>
+                                    <div class="meta_widget">
+                                        <div class="pull-left">
+                                            <a class="readmore" href="#">Feburay 16, 2013</a>
+                                        </div>
+                                        <div class="pull-right">
+                                            <div class="rating">
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star-o"></i>
+                                            </div><!-- rating -->
+                                        </div>
+                                    </div><!-- end meta_widget -->
+                                </li>
+                            </ul><!-- recent posts -->
+                        </div><!-- end widget -->
+                    </div><!-- end col-sm-6 -->
+                </div><!-- end row -->
+
+            </div><!-- end widget -->
+            <div class="clearfix"></div>
+
+            <hr>
+            <div class="widget">
+                <div class="title">
+                    <h2>Life Style</h2>
+                </div><!-- end title -->
+
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="cat_widget">
+                            <div class="entry">
+                                <img class="img-responsive" src="demos/lifestyle_01.jpg" alt="">
+                                <div class="magnifier">
+                                    <div class="buttons">
+                                        <a href="#"><h3>Fashion</h3></a>
+                                    </div><!-- end buttons -->
+                                </div><!-- end magnifier -->
+                            </div><!-- end entry -->
+                        </div><!-- end cat_widget -->
+                    </div><!-- end col-lg-3 -->
+                    <div class="col-lg-3">
+                        <div class="cat_widget">
+                            <div class="entry">
+                                <img class="img-responsive" src="demos/lifestyle_02.jpg" alt="">
+                                <div class="magnifier">
+                                    <div class="buttons">
+                                        <a href="#"><h3>World</h3></a>
+                                    </div><!-- end buttons -->
+                                </div><!-- end magnifier -->
+                            </div><!-- end entry -->
+                        </div><!-- end cat_widget -->
+                    </div><!-- end col-lg-3 -->
+                    <div class="col-lg-3">
+                        <div class="cat_widget">
+                            <div class="entry">
+                                <img class="img-responsive" src="demos/lifestyle_03.jpg" alt="">
+                                <div class="magnifier">
+                                    <div class="buttons">
+                                        <a href="#"><h3>Sport</h3></a>
+                                    </div><!-- end buttons -->
+                                </div><!-- end magnifier -->
+                            </div><!-- end entry -->
+                        </div><!-- end cat_widget -->
+                    </div><!-- end col-lg-3 -->
+                    <div class="col-lg-3">
+                        <div class="cat_widget">
+                            <div class="entry">
+                                <img class="img-responsive" src="demos/lifestyle_04.jpg" alt="">
+                                <div class="magnifier">
+                                    <div class="buttons">
+                                        <a href="#"><h3>Political</h3></a>
+                                    </div><!-- end buttons -->
+                                </div><!-- end magnifier -->
+                            </div><!-- end entry -->
+                        </div><!-- end cat_widget -->
+                    </div><!-- end col-lg-3 -->
+                </div><!-- end row -->
+            </div><!-- end widget -->
+            <div class="clearfix"></div>
+
+            <hr>
+
+            <div class="widget">
+                <div class="title">
+                    <h2>Editor Pick's</h2>
+                </div><!-- end title -->
+                <div class="row reviews_widget">
+                    <div class="col-sm-6">
+                        <div class="blog-carousel">
+                            <div class="entry">
+                                <img src="demos/lifestyle_05.jpg" alt="" class="img-responsive">
+                                <div class="magnifier">
+                                    <div class="buttons">
+                                        <a class="st" rel="bookmark" href="blog-single-sidebar.html"><i class="fa fa-link"></i></a>
+                                    </div><!-- end buttons -->
+                                </div><!-- end magnifier -->
+                                <div class="post-type">
+                                    <i class="fa fa-picture-o"></i>
+                                </div><!-- end pull-right -->
+                            </div><!-- end entry -->
+                            <div class="blog-carousel-header">
+                                <h3><a title="" href="blog-single-sidebar.html">New Graphic Designer on the block</a></h3>
+                                <div class="blog-carousel-meta">
+                                    <span><i class="fa fa-calendar"></i> April 01, 2014</span>
+                                    <span><i class="fa fa-comment"></i> <a href="#">03 Comments</a></span>
+                                    <span><i class="fa fa-eye"></i> <a href="#">84 Views</a></span>
+                                </div><!-- end blog-carousel-meta -->
+                            </div><!-- end blog-carousel-header -->
+                            <div class="blog-carousel-desc">
+                                <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra. Aenean vel faucibus nunc, et venenatis magna. In hac habitasse platea dictumst. </p>
+                            </div><!-- end blog-carousel-desc -->
+                        </div><!-- end blog-carousel -->
+                    </div><!-- end col-sm-6 -->
+                    <div class="col-sm-6">
+                        <div class="widget">
+                            <ul class="recent_posts_widget">
+                                <li>
+                                    <a href="#"><img src="demos/tabbed_widget_01.jpg" alt="" />Android Toy Restyled...</a>
+                                    <p>Aenean vel faucibus nunc, et venenatis magna... </p>
+                                    <div class="meta_widget">
+                                        <div class="pull-left">
+                                            <a class="readmore" href="#">Feburay 16, 2013</a>
+                                        </div>
+                                        <div class="pull-right">
+                                            <div class="rating">
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star-o"></i>
+                                            </div><!-- rating -->
+                                        </div>
+                                    </div><!-- end meta_widget -->
+                                </li>
+                                <li>
+                                    <a href="#"><img src="demos/tabbed_widget_02.jpg" alt="" />Android Toy Restyled...</a>
+                                    <p>Aenean vel faucibus nunc, et venenatis magna... </p>
+                                    <div class="meta_widget">
+                                        <div class="pull-left">
+                                            <a class="readmore" href="#">Feburay 16, 2013</a>
+                                        </div>
+                                        <div class="pull-right">
+                                            <div class="rating">
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star-o"></i>
+                                            </div><!-- rating -->
+                                        </div>
+                                    </div><!-- end meta_widget -->
+                                </li>
+                                <li>
+                                    <a href="#"><img src="demos/tabbed_widget_03.jpg" alt="" />Android Toy Restyled...</a>
+                                    <p>Aenean vel faucibus nunc, et venenatis magna... </p>
+                                    <div class="meta_widget">
+                                        <div class="pull-left">
+                                            <a class="readmore" href="#">Feburay 16, 2013</a>
+                                        </div>
+                                        <div class="pull-right">
+                                            <div class="rating">
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star-o"></i>
+                                            </div><!-- rating -->
+                                        </div>
+                                    </div><!-- end meta_widget -->
+                                </li>
+                            </ul><!-- recent posts -->
+                        </div><!-- end widget -->
+                    </div><!-- end col-sm-6 -->
+                </div><!-- end row -->
+            </div><!-- end widget -->
+
+            <div class="clearfix"></div>
+
+            <hr>
+
+            <div class="carousel_wrapper">
+                <div class="title">
+                    <h2>Popular Posts</h2>
+                </div><!-- end title -->
+
+                <div class="margin-top">
+                    <div id="owl_blog_three_line" class="owl-carousel">
+                        <div class="blog-carousel">
+                            <div class="entry">
+                                <img src="demos/lifestyle_07.jpg" alt="" class="img-responsive">
+                                <div class="magnifier">
+                                    <div class="buttons">
+                                        <a class="st" rel="bookmark" href="blog-single-sidebar.html"><i class="fa fa-link"></i></a>
+                                    </div><!-- end buttons -->
+                                </div><!-- end magnifier -->
+                                <div class="post-type">
+                                    <i class="fa fa-picture-o"></i>
+                                </div><!-- end pull-right -->
+                            </div><!-- end entry -->
+                            <div class="blog-carousel-header">
+                                <h3><a title="" href="blog-single-sidebar.html">Publicis $35bn merger deal called off</a></h3>
+                                <div class="blog-carousel-meta">
+                                    <span><i class="fa fa-calendar"></i> April 01, 2014</span>
+                                    <span><i class="fa fa-comment"></i> <a href="#">03 Comments</a></span>
+                                    <span><i class="fa fa-eye"></i> <a href="#">84 Views</a></span>
+                                </div><!-- end blog-carousel-meta -->
+                            </div><!-- end blog-carousel-header -->
+                            <div class="blog-carousel-desc">
+                                <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean vel faucibus nunc, et venenatis magna. In hac habitasse platea dictumst. </p>
+                            </div><!-- end blog-carousel-desc -->
+                        </div><!-- end blog-carousel -->
+                        <div class="blog-carousel">
+                            <div class="entry">
+                                <img src="demos/lifestyle_08.jpg" alt="" class="img-responsive">
+                                <div class="magnifier">
+                                    <div class="buttons">
+                                        <a class="st" rel="bookmark" href="blog-single-sidebar.html"><i class="fa fa-link"></i></a>
+                                    </div><!-- end buttons -->
+                                </div><!-- end magnifier -->
+                                <div class="post-type">
+                                    <i class="fa fa-picture-o"></i>
+                                </div><!-- end pull-right -->
+                            </div><!-- end entry -->
+                            <div class="blog-carousel-header">
+                                <h3><a title="" href="blog-single-sidebar.html">Living the good life with the super rich </a></h3>
+                                <div class="blog-carousel-meta">
+                                    <span><i class="fa fa-calendar"></i> April 01, 2014</span>
+                                    <span><i class="fa fa-comment"></i> <a href="#">03 Comments</a></span>
+                                    <span><i class="fa fa-eye"></i> <a href="#">84 Views</a></span>
+                                </div><!-- end blog-carousel-meta -->
+                            </div><!-- end blog-carousel-header -->
+                            <div class="blog-carousel-desc">
+                                <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean vel faucibus nunc, et venenatis magna. In hac habitasse platea dictumst. </p>
+                            </div><!-- end blog-carousel-desc -->
+                        </div><!-- end blog-carousel -->
+
+                        <div class="blog-carousel">
+                            <div class="entry">
+                                <iframe class="soundcloud" height="166" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/143789978&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_artwork=true"></iframe>
+                                <div class="post-type">
+                                    <i class="fa fa-music"></i>
+                                </div><!-- end pull-right -->
+                            </div><!-- end entry -->
+                            <div class="blog-carousel-header">
+                                <h3><a title="" href="blog-single-sidebar.html">Here We Go Again</a></h3>
+                                <div class="blog-carousel-meta">
+                                    <span><i class="fa fa-calendar"></i> April 01, 2014</span>
+                                    <span><i class="fa fa-comment"></i> <a href="#">03 Comments</a></span>
+                                    <span><i class="fa fa-eye"></i> <a href="#">84 Views</a></span>
+                                </div><!-- end blog-carousel-meta -->
+                            </div><!-- end blog-carousel-header -->
+                            <div class="blog-carousel-desc">
+                                <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean vel faucibus nunc, et venenatis magna. In hac habitasse platea dictumst. </p>
+                            </div><!-- end blog-carousel-desc -->
+                        </div><!-- end blog-carousel -->
+                        <div class="blog-carousel">
+                            <div class="entry">
+                                <iframe class="vimeo_video" src="http://player.vimeo.com/video/72960194?title=0&amp;byline=0&amp;portrait=0&amp;color=ffffff" width="500" height="281"></iframe>
+                                <div class="post-type">
+                                    <i class="fa fa-play"></i>
+                                </div><!-- end pull-right -->
+                            </div><!-- end entry -->
+                            <div class="blog-carousel-header">
+                                <h3><a title="" href="blog-single-sidebar.html">A Video Post Type</a></h3>
+                                <div class="blog-carousel-meta">
+                                    <span><i class="fa fa-calendar"></i> April 01, 2014</span>
+                                    <span><i class="fa fa-comment"></i> <a href="#">03 Comments</a></span>
+                                    <span><i class="fa fa-eye"></i> <a href="#">84 Views</a></span>
+                                </div><!-- end blog-carousel-meta -->
+                            </div><!-- end blog-carousel-header -->
+                            <div class="blog-carousel-desc">
+                                <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean vel faucibus nunc, et venenatis magna. In hac habitasse platea dictumst. </p>
+                            </div><!-- end blog-carousel-desc -->
+                        </div><!-- end blog-carousel -->
+
+                        <div class="blog-carousel">
+                            <div class="entry">
+                                <div class="quote-post">
+                                    <blockquote>
+                                        <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+                                        <small>
+                                            Someone famous in
+                                            <cite title="Source Title">John DOE</cite>
+                                        </small>
+                                    </blockquote>
+                                </div><!-- end quote-post -->
+                                <div class="post-type">
+                                    <i class="fa fa-quote-right"></i>
+                                </div><!-- end pull-right -->
+                            </div><!-- end entry -->
+                            <div class="blog-carousel-header">
+                                <h3><a title="" href="blog-single-sidebar.html">This is a quote post</a></h3>
+                                <div class="blog-carousel-meta">
+                                    <span><i class="fa fa-calendar"></i> April 01, 2014</span>
+                                    <span><i class="fa fa-comment"></i> <a href="#">03 Comments</a></span>
+                                    <span><i class="fa fa-eye"></i> <a href="#">84 Views</a></span>
+                                </div><!-- end blog-carousel-meta -->
+                            </div><!-- end blog-carousel-header -->
+                            <div class="blog-carousel-desc">
+                                <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean vel faucibus nunc, et venenatis magna. </p>
+                            </div><!-- end blog-carousel-desc -->
+                        </div><!-- end blog-carousel -->
+                    </div><!-- end owl-blog -->
+                </div><!-- end padding-top -->
+            </div><!-- end carousel_wrapper -->
+
+        </div><!-- end content -->
+
+        <div id="sidebar" class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="widget">
+                <div class="title">
+                    <h2>What’s Hot</h2>
+                </div><!-- end title -->
+                <ul class="recent_posts_widget">
+                    <li>
+                        <a href="#"><img src="demos/sidebar_hot_01.jpg" alt="" />Android Toy Restyled Again Latest Phone.</a>
+                        <a class="readmore" href="#">Feburay 16, 2013</a>
+                        <div class="rating">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star-o"></i>
+                        </div><!-- rating -->
+                    </li>
+                    <li>
+                        <a href="#"><img src="demos/sidebar_hot_02.jpg" alt="" />Nulla vitae libero, a pharetra. </a>
+                        <a class="readmore" href="#">Feburay 16, 2013</a>
+                        <div class="rating">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                        </div><!-- rating -->
+                    </li>
+                    <li>
+                        <a href="#"><img src="demos/sidebar_hot_03.jpg" alt="" />This is another review post.</a>
+                        <a class="readmore" href="#">Feburay 16, 2013</a>
+                        <div class="rating">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star-o"></i>
+                        </div><!-- rating -->
+                    </li>
+                    <li>
+                        <a href="#"><img src="demos/sidebar_hot_04.jpg" alt="" />Did you see our new fruit?</a>
+                        <a class="readmore" href="#">Feburay 16, 2013</a>
+                        <div class="rating">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                        </div><!-- rating -->
+                    </li>
+                </ul><!-- recent posts -->
+            </div><!-- end widget -->
+
+            <div class="widget">
+                <div class="title">
+                    <h2>Tabbed Widget</h2>
+                </div><!-- end title -->
+                <div id="tabbed_widget" class="tabbable">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#recent" data-toggle="tab">RECENT</a></li>
+                        <li><a href="#new" data-toggle="tab">POPULAR</a></li>
+                        <li><a href="#commentstab" data-toggle="tab">COMMENTS</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="recent">
+                            <ul class="recent_posts_widget">
+                                <li>
+                                    <a href="#"><img src="demos/tabbed_widget_01.jpg" alt="" />Restyled Again Latest Phone.</a>
+                                    <a class="readmore" href="#">Feburay 16, 2013</a>
+                                    <div class="rating">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-o"></i>
+                                    </div><!-- rating -->
+                                </li>
+                                <li>
+                                    <a href="#"><img src="demos/tabbed_widget_02.jpg" alt="" />Nulla vitae libero, a pharetra. </a>
+                                    <a class="readmore" href="#">Feburay 16, 2013</a>
+                                    <div class="rating">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                    </div><!-- rating -->
+                                </li>
+                                <li>
+                                    <a href="#"><img src="demos/tabbed_widget_03.jpg" alt="" />This is another review post.</a>
+                                    <a class="readmore" href="#">Feburay 16, 2013</a>
+                                    <div class="rating">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-o"></i>
+                                    </div><!-- rating -->
+                                </li>
+                            </ul><!-- recent posts -->
+                        </div>
+                        <div class="tab-pane" id="new">
+                            <ul class="recent_posts_widget">
+                                <li>
+                                    <a href="#"><img src="demos/tabbed_widget_03.jpg" alt="" />Restyled Again Latest Phone.</a>
+                                    <a class="readmore" href="#">Feburay 16, 2013</a>
+                                    <div class="rating">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-o"></i>
+                                    </div><!-- rating -->
+                                </li>
+                                <li>
+                                    <a href="#"><img src="demos/tabbed_widget_02.jpg" alt="" />Nulla vitae libero, a pharetra. </a>
+                                    <a class="readmore" href="#">Feburay 16, 2013</a>
+                                    <div class="rating">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                    </div><!-- rating -->
+                                </li>
+                                <li>
+                                    <a href="#"><img src="demos/tabbed_widget_01.jpg" alt="" />This is another review post.</a>
+                                    <a class="readmore" href="#">Feburay 16, 2013</a>
+                                    <div class="rating">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-o"></i>
+                                    </div><!-- rating -->
+                                </li>
+                            </ul><!-- recent posts -->
+                        </div>
+                        <div class="tab-pane" id="commentstab">
+                            <ul class="recent_posts_widget">
+                                <li>
+                                    <a href="#"><img src="demos/sidebar_hot_01.jpg" alt="" />Android Toy Restyled Again Latest Phone.</a>
+                                    <a class="readmore" href="#">Feburay 16, 2013</a>
+                                    <div class="rating">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-o"></i>
+                                    </div><!-- rating -->
+                                </li>
+                                <li>
+                                    <a href="#"><img src="demos/sidebar_hot_02.jpg" alt="" />Nulla vitae libero, a pharetra. </a>
+                                    <a class="readmore" href="#">Feburay 16, 2013</a>
+                                    <div class="rating">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                    </div><!-- rating -->
+                                </li>
+                                <li>
+                                    <a href="#"><img src="demos/sidebar_hot_03.jpg" alt="" />This is another review post.</a>
+                                    <a class="readmore" href="#">Feburay 16, 2013</a>
+                                    <div class="rating">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-o"></i>
+                                    </div><!-- rating -->
+                                </li>
+                            </ul><!-- recent posts -->
+                        </div>
+                    </div><!-- end tab content -->
+                </div><!-- end tab pane -->
+            </div><!-- end widget -->
+
+            <div class="widget">
+                <div class="title">
+                    <h2>KEEP IN TOUCH</h2>
+                </div><!-- end title -->
+
+                <div class="social_widget">
+                    <div class="social_like">
+                        <div class="icon-container pull-left">
+                            <i class="fa fa-twitter"></i>
+                        </div>
+                        <div class="social_count">
+                            <h3><a href="#">Follow Us on Twitter</a></h3>
+                            <small>37 Followers</small>
+                            <div class="social_button">
+                                <a href="#" class="btn btn-primary">Follow</a>
+                            </div>
+                        </div>
+                    </div><!-- end social like -->
+                    <div class="social_like">
+                        <div class="icon-container pull-left">
+                            <i class="fa fa-facebook"></i>
+                        </div>
+                        <div class="social_count">
+                            <h3><a href="#">Like on Facebook</a></h3>
+                            <small>221 Fans</small>
+                            <div class="social_button">
+                                <a href="#" class="btn btn-primary">Like</a>
+                            </div>
+                        </div>
+                    </div><!-- end social like -->
+                    <div class="social_like">
+                        <div class="icon-container pull-left">
+                            <i class="fa fa-youtube"></i>
+                        </div>
+                        <div class="social_count">
+                            <h3><a href="#">Youtube Playlist</a></h3>
+                            <small>6169 Subscribers</small>
+                            <div class="social_button">
+                                <a href="#" class="btn btn-primary">Subscribe</a>
+                            </div>
+                        </div>
+                    </div><!-- end social like -->
+                    <div class="social_like">
+                        <div class="icon-container pull-left">
+                            <i class="fa fa-flickr"></i>
+                        </div>
+                        <div class="social_count">
+                            <h3><a href="#">Flickr Stream</a></h3>
+                            <small>887 Followers</small>
+                            <div class="social_button">
+                                <a href="#" class="btn btn-primary">Follow</a>
+                            </div>
+                        </div>
+                    </div><!-- end social like -->
+                </div><!-- end social-widget -->
+            </div><!-- end widget -->
+        </div><!-- end content -->
+    </div><!-- end container -->
+</section><!--end white-wrapper -->
+@section scripts {
+    <script type="text/javascript" src="/theme/jollyany/rs-plugin/js/jquery.themepunch.plugins.min.js"></script>
+    <script type="text/javascript" src="/theme/jollyany/rs-plugin/js/jquery.themepunch.revolution.min.js"></script>
+    <script type="text/javascript">
+        var revapi;
+        jQuery(document).ready(function () {
+            revapi = jQuery('.tp-banner').revolution(
+		    {
+			    delay: 15000,
+			    startwidth: 1170,
+			    startheight: 500,
+			    hideThumbs: 10,
+			    fullWidth: "off",
+			    fullScreen: "on",
+			    fullScreenOffsetContainer: "",
+			    touchenabled: "off",
+			    onHoverStop: "off",
+		    });
+        });
+    </script>
+}
+
+@{
+    // Trace performance...
+    appctx?.AddPerfLog("Vep\\Views\\Home\\Index.cshtml");
+}

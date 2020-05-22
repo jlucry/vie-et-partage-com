@@ -1,0 +1,44 @@
+﻿@model RegisterViewModel
+@{
+    //Layout = "_LayoutAccount";
+    ViewData["Title"] = "Créer un compte";
+}
+<section class="blog-wrapper">
+    <div class="container">
+        <div id="content" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                <form asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" autocomplete="off" class="form-horizontal" style="margin:20px;"  role="form">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-material" style="padding-bottom:20px;">
+                        <label asp-for="LName" class="floating-label"></label>
+                        <input asp-for="LName" type="text" class="form-control" />
+                        <span asp-validation-for="LName" class="text-danger"></span>
+                    </div>
+                    <div class="form-material" style="padding-bottom:20px;">
+                        <label asp-for="FName" class="floating-label"></label>
+                        <input asp-for="FName" type="text" class="form-control" />
+                        <span asp-validation-for="FName" class="text-danger"></span>
+                    </div>
+                    <div class="form-material" style="padding-bottom:20px;">
+                        <label asp-for="Email" class="floating-label"></label>
+                        <input asp-for="Email" type="email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-material" style="padding-bottom:10px;">
+                        <label asp-for="Password" class="floating-label"></label>
+                        <input asp-for="Password" type="password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-material" style="padding-bottom:20px;">
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:20px;">Créer un compte</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

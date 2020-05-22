@@ -1,0 +1,836 @@
+---
+title: Forum
+body_class: app-forum
+---
+
+{{#extend "layout-empty"}}
+
+    {{#content "body"}}
+
+        <!--Post view\edition-->
+        <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="PostEditSide"
+                    md-disable-scroll-target="#elmBody"
+                    style="max-width:\{{vm.SideMaxWidth}};width: 100%;">
+            <md-content ng-controller="PostEditController as edt">
+                <!--Post tool bar-->
+                <md-toolbar class="md-theme-indigo">
+                    <div layout="row">
+                        <h1></h1>
+                        <span flex></span>
+                        <md-button class="md-icon-button"
+                                   ng-if="edt.Edition != 0 && edt.Pushing == false"
+                                   ng-click="edt.Apply()">
+                            <md-tooltip md-visible="false">Sauvegarder</md-tooltip>
+                            <md-icon md-font-set="material-icons">save</md-icon>
+                        </md-button>
+                        <md-button class="md-icon-button md-accent"
+                                   ng-if="edt.Edition != 0 && edt.Edition != 1 && edt.Pushing == false"
+                                   ng-click="edt.Remove()">
+                            <md-tooltip md-visible="false">Effacer</md-tooltip>
+                            <md-icon md-font-set="material-icons">delete</md-icon>
+                        </md-button>
+                        <md-button class="md-icon-button"
+                                   ng-if="edt.Edition != 0"
+                                   ng-click="edt.Cancel()">
+                            <md-tooltip md-visible="false">Retourner au post</md-tooltip>
+                            <md-icon md-font-set="material-icons">backspace</md-icon>
+                        </md-button>
+                        <md-button ng-if="edt.Edition == 0"
+                                   class="md-icon-button"
+                                   ng-click="edt.Close()">
+                            <md-tooltip md-visible="false">Quiter</md-tooltip>
+                            <md-icon md-font-set="material-icons">close</md-icon>
+                        </md-button>
+                    </div>
+                </md-toolbar>
+                <md-toolbar class="md-theme-indigo">
+                    <div layout="column">
+                        <h1 ng-if="edt.Post == null || edt.Post.Title == null"
+                            class="md-toolbar-tools">
+                            Chargement...
+                        </h1>
+                        <h1 ng-if="edt.Edition != 1"
+                            ng-bind-html="edt.Post.Title"
+                            class="md-toolbar-tools"
+                            style="color:rgba(255,255,255,0.87);height: auto;max-height: unset;"></h1>
+                    </div>
+                </md-toolbar>
+                <md-toolbar ng-if="edt.Edition == 0" class="slidePanel-header" style="background-image: url('\{{edt.PostCover}}');background-position: right center;background-size: 100%;background-repeat: no-repeat">
+                    <!--<div ng-if="edt.PostCover != ''" style="padding: 0px;margin: 0px;"><br /><br /><br /><br /></div>-->
+                    <span flex></span>
+                    <md-fab-toolbar ng-if="edt.Post != null && vm.IsContributor == true" md-open="false" md-direction="left">
+                        <md-fab-trigger class="align-with-text">
+                            <md-button class="md-fab md-primary md-hue-2">
+                                <md-tooltip md-direction="top">Modifier le post</md-tooltip>
+                                <md-icon md-font-set="material-icons">mode_edit</md-icon>
+                            </md-button>
+                        </md-fab-trigger>
+                        <md-toolbar>
+                            <md-fab-actions class="md-toolbar-tools">
+                                <md-button class="md-icon-button" ng-click="edt.EditSettings()">
+                                    <!--<md-tooltip md-direction="top">Modifier les parametres du post</md-tooltip>-->
+                                    <md-icon md-font-set="material-icons">settings</md-icon>
+                                </md-button>
+                                <md-button class="md-icon-button" ng-click="edt.EditFile()">
+                                    <!--<md-tooltip md-direction="top">Modifier les fichiers du post</md-tooltip>-->
+                                    <md-icon md-font-set="material-icons">attach_file</md-icon>
+                                </md-button>
+                                <md-button class="md-icon-button" ng-click="edt.EditDate()">
+                                    <!--<md-tooltip md-direction="bottom">Modifier la date d'événement du post</md-tooltip>-->
+                                    <md-icon md-font-set="material-icons">event</md-icon>
+                                </md-button>
+                                <md-button class="md-icon-button" ng-click="edt.EditCover()">
+                                    <!--<md-tooltip md-direction="left">Modifier la couverture du post</md-tooltip>-->
+                                    <md-icon md-font-set="material-icons">wallpaper</md-icon>
+                                </md-button>
+                                <md-button class="md-icon-button" ng-click="edt.EditText()">
+                                    <!--<md-tooltip md-direction="right">Modifier le texte du post</md-tooltip>-->
+                                    <md-icon md-font-set="material-icons">short_text</md-icon>
+                                </md-button>
+                            </md-fab-actions>
+                        </md-toolbar>
+                    </md-fab-toolbar>
+                </md-toolbar>
+                <md-toolbar ng-if="edt.Edition == 1" class="slidePanel-header">
+                    <md-input-container class="md-block" flex-gt-lg style="margin-top:22px;margin-left:8px;margin-right:8px;margin-bottom:11px;">
+                        <textarea style="color:white;" md-maxlength="300" required md-no-asterisk name="description" ng-model="edt.Post.Title" rows="1" md-select-on-focus></textarea>
+                    </md-input-container>
+                </md-toolbar>
+                <!--Progress bar-->
+                <!--ng-show is not working propelry so force the class-->
+                <md-progress-linear ng-disabled="!edt.ShowProgress" class="\{{edt.LoadClass}}" md-mode="indeterminate"></md-progress-linear>
+                <!--Message panel-->
+                <div ng-if="edt.Error != null" 
+                     ng-bind-html="edt.Error"
+                     class="alert alert-danger alert-dismissible" style="border-radius: 0px;margin-bottom: 0px;" role="alert">
+                </div>
+                <div ng-if="edt.Post.State == 0" class="alert" style="border-radius: 0px;margin: 0px;background-color: rgb(16,108,200);color: rgba(255,255,255,0.87);" style="margin-bottom: 0px;" role="alert">
+                    En &#233;dition
+                </div>
+                <div ng-if="edt.Post.State == 2" class="alert alert-danger alert-dismissible" style="border-radius: 0px;margin-bottom: 0px;" role="alert">
+                    En poubelle
+                </div>
+                <!--Post view-->
+                <div ng-if="edt.Edition == 0" class="md-dialog-content" layout-padding>
+                    <div class="slidePanel-inner">
+                        <section class="slidePanel-inner-section">
+                            <!--Post date-->
+                            <div ng-if="edt.Post.StartDate != null" class="col-sm-12">
+                                <blockquote>
+                                    <div>
+                                        <div class="media">
+                                            <!--<div class="media-left responsive-hide">
+                                                <md-icon md-font-set="material-icons" style="font-size:60px;" aria-hidden="true">date_range</md-icon>
+                                                <i class="icon md0-calendar-note" style="font-size:60px;" aria-hidden="true"></i>
+                                            </div>-->
+                                            <div class="media-body">
+                                                Du \{{edt.Post.StartDate | date:'dd MMMM yyyy HH:mm'}}<br />
+                                                Au \{{edt.Post.EndDate | date:'dd MMMM yyyy HH:mm'}}<br />
+                                            </div>
+                                        </div>
+                                        <span ng-if="edt.Post.ClaimRegistration == true"><br />Inscription nécessaire!</span>
+                                    </div>
+                                    <!--<footer></footer>-->
+                                </blockquote>
+                            </div>
+                            <!--Post text-->
+                            <div class="forum-content col-sm-12">
+                                <div class="media">
+                                    <div class="media-body">
+                                        <div ng-bind-html="edt.TrustedTextContain"></div>
+                                        <br />
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Post videos-->
+                            <div ng-if="edt.PostMediaVideo == true" class="forum-content col-xlg-12">
+                                <div class="page-content">
+                                    <!--<h4 class="example-title">Video</h4>-->
+                                    <hr />
+                                    <div class="example" ng-repeat="mediavideo in edt.Post.PostMediaVideo">
+                                        <div class="cover player">
+                                            <video width="100%" height="auto" controls>
+                                                <source src="\{{::mediavideo.Url}}">
+                                                <a href="\{{::mediavideo.Url}}">Download</a>
+                                            </video>
+                                            <!--<iframe width="854" height="480" src="\{{::mediavideo.Url}}" frameborder="0" allowfullscreen></iframe>
+                                            <div id="ytapiplayer">
+                                                You need Flash player 8+ and JavaScript enabled to view this video.
+                                            </div>
+                                            <script type="text/javascript">
+                                                var params = { allowScriptAccess: "always" };
+                                                var atts = { id: "myytplayer" };
+                                                swfobject.embedSWF("http://www.youtube.com/v/VIDEO_ID?enablejsapi=1&playerapiid=ytplayer&version=3",
+                                                                    "ytapiplayer", "425", "356", "8", null, null, params, atts);
+                                            </script>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Post audio-->
+                            <div ng-if="edt.PostMedia == true" class="forum-content col-xlg-12">
+                                <div class="page-content">
+                                    <!--<h4 class="example-title">Audio</h4>-->
+                                    <hr />
+                                    <div class="example" ng-repeat="media in edt.Post.PostMedia">
+                                        <div class="cover player">
+                                            <audio width="100%" height="auto" controls>
+                                                <source src="\{{::media.Url}}">
+                                                <a href="\{{::media.Url}}">Download</a>
+                                            </audio>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Post images-->
+                            <div ng-if="edt.PostImg == true" class="forum-content col-xlg-12">
+                                <div class="page-content">
+                                    <!--<h4 class="example-title">Photos</h4>-->
+                                    <hr />
+                                    <div layout-of="row" layout-wrap ng-repeat="img in edt.Post.PostImg" style="padding-bottom: 2px;">
+                                        <div flex-off="25">
+                                            <!--<figure class="widget-header overlay-hover overlay">-->
+                                                <img class="overlay-figure overlay-scale" src="\{{::img.Url}}" alt="..." style="width:100%">
+                                                <br />
+                                                <!--<figcaption class="overlay-panel overlay-background overlay-fade overlay-icon">
+                                                    <a class="icon md-search" href="\{{::img.Url}}"></a>
+                                                </figcaption>-->
+                                            <!--</figure>-->
+                                            <!--<h4 class="widget-title">\{{::img.Title}}</h4>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Post files-->
+                            <div ng-if="edt.PostFiles == true" class="forum-content col-xlg-12">
+                                <div class="page-content">
+                                    <!--<h4 class="example-title">Fichiers</h4>-->
+                                    <hr />
+                                    <ul class="list-group list-group-dividered list-group-full">
+                                        <li ng-repeat="file in edt.Post.PostFiles"><a href="\{{::file.Url}}">\{{::file.Title}}</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <!--Titre and text edition-->
+                <div ng-if="edt.Edition == 1" class="media-body" style="padding: 0px;margin: 0px;">
+                    <summernote config="edt.SummerOptions" ng-model="edt.Post.TextContain"></summernote>
+                </div>
+                <!--Date edition-->
+                <div ng-if="edt.Edition == 2" class="md-dialog-content" layout-padding>
+                    <div class="slidePanel-inner">
+                        <section class="slidePanel-inner-section">
+                            <div class="col-sm-12">
+                                <blockquote>
+                                    <div>
+                                        <div class="media">
+                                            <!--<div class="media-left responsive-hide">
+                <i class="icon md0-calendar-note" style="font-size:60px" aria-hidden="true"></i>
+            </div>-->
+                                            <div class="media-body" style="padding-top: 10px">
+                                                <md-input-container class="md-block" flex-gt-lg>
+                                                    <label>Du (jj/mm/aaaa hh:mm)</label><input md-maxlength="16" ng-model="edt.Post.StartDateString">
+                                                </md-input-container>
+                                                <md-input-container class="md-block" flex-gt-lg>
+                                                    <label>Au (jj/mm/aaaa hh:mm)</label>
+                                                    <input md-maxlength="16" ng-model="edt.Post.EndDateString">
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </blockquote>
+                                <br>
+                                <!--<div layout="row" flex="100">-->
+                                    <md-checkbox ng-model="edt.Post.ClaimRegistration"
+                                                 ng-click="edt.EnableEvent($event)">Inscription</md-checkbox>
+                                    <span flex></span>
+                                    <md-input-container ng-if="edt.Post.ClaimRegistration == true" class="md-block">
+                                        <label>Confirmation web d'inscription</label>
+                                        <textarea ng-model="edt.Post.RegistrationWebConfirmation" md-maxlength-off="150" rows="5" md-select-on-focus></textarea>
+                                    </md-input-container>
+                                    <md-input-container ng-if="edt.Post.ClaimRegistration == true" class="md-block">
+                                        <label>Email de confirmation</label>
+                                        <textarea ng-model="edt.Post.RegistrationEmailConfirmation" md-maxlength-off="150" rows="5" md-select-on-focus></textarea>
+                                    </md-input-container>
+
+                                    <span flex ng-if="edt.Post.ClaimRegistration == true" >Fiche d'inscription:</span>
+                                    <md-button ng-if="edt.Post.ClaimRegistration == true" class="md-fab md-mini md-primary">
+                                        <md-tooltip md-direction="top">Ajouter une entrée à la fiche d'inscription</md-tooltip>
+                                        <md-icon md-font-set="material-icons"
+                                                 ng-click="edt.AddEventField($event)">add</md-icon>
+                                    </md-button>
+                                    <md-button ng-if="edt.Post.ClaimRegistration == true" class="md-fab md-mini md-primary">
+                                        <md-tooltip md-direction="top">Réinitialiser la fiche d'inscription</md-tooltip>
+                                        <md-icon md-font-set="material-icons"
+                                                 ng-click="edt.ResetEventField($event)">restore</md-icon>
+                                    </md-button>
+                                <!--</div>-->
+                                <div ng-if="edt.Post.ClaimRegistration == true" layout-gt-sm="column" ng-repeat="field in edt.Post.RegistrationFields">
+                                    <div layout="column" flex="100">
+                                        <blockquote>
+                                            <div layout="row" flex>
+                                                <md-input-container class="md-block" flex-gt-sm flex="40">
+                                                    <label>Titre:</label>
+                                                    <input ng-model="field.Title">
+                                                </md-input-container>
+                                                <md-input-container class="md-block" flex-gt-sm flex="30">
+                                                    <label>Type:</label>
+                                                    <md-select ng-model="field.Type">
+                                                        <md-option ng-value="1">Texte</md-option>
+                                                        <md-option ng-value="2">Oui\Non</md-option>
+                                                        <md-option ng-value="3">Oui\Non & Precision</md-option>
+                                                        <md-option ng-value="4">Choix simple</md-option>
+                                                        <md-option ng-value="5">Choix double</md-option>
+                                                    </md-select>
+                                                </md-input-container>
+                                                <span flex></span>
+                                                <md-input-container class="md-block" flex-gt-sm flex="30" layout-align="end end">
+                                                    <md-button class="md-icon-button md-mini md-primary md-hue-2">
+                                                        <md-icon md-font-set="material-icons"
+                                                                 ng-click="edt.MoveEventField(1, $index)">arrow_upward</md-icon>
+                                                    </md-button>
+                                                    <md-button class="md-icon-button md-mini md-primary md-hue-2">
+                                                        <md-icon md-font-set="material-icons"
+                                                                 ng-click="edt.MoveEventField(-1, $index)">arrow_downward</md-icon>
+                                                    </md-button>
+                                                    <md-button class="md-icon-button md-mini">
+                                                        <md-icon md-font-set="material-icons"
+                                                                 ng-click="edt.MoveEventField(0, $index)">delete</md-icon>
+                                                    </md-button>
+                                                </md-input-container>
+                                            </div>
+                                            <div ng-if="field.Type == 3" layout="column" flex style="margin-left:50px;">
+                                                <md-input-container class="md-block" flex-gt-sm flex="100">
+                                                    <label flex="30">Précision:</label>
+                                                    <input ng-model="field.Details">
+                                                </md-input-container>
+                                            </div>
+                                            <div ng-if="field.Type == 4 || field.Type == 5" layout="column" flex style="margin-left:50px;">
+                                                <md-input-container class="md-block" flex-gt-sm flex="100">
+                                                    <label flex="30">Premier choix:</label>
+                                                    <md-chips flex="100" ng-model="field.Choose" readonly="false" md-removable="true"></md-chips>
+                                                </md-input-container>
+                                            </div>
+                                            <div ng-if="field.Type == 4 || field.Type == 5" layout="column" flex style="margin-left:50px;">
+                                                <md-input-container class="md-block" flex-gt-sm flex="100">
+                                                    <label flex="30">Deuxieme choix:</label>
+                                                    <md-chips ng-if="field.Type == 5" flex="100" ng-model="field.Choose2" readonly="false" md-removable="true"></md-chips>
+                                                </md-input-container>
+                                            </div>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <!--Post settings-->
+                <div ng-if="edt.Edition == 3" class="md-dialog-content" layout-padding>
+                    <div class="slidePanel-inner">
+                        <section class="slidePanel-inner-section">
+                            <div class="col-sm-12">
+                                <blockquote>
+                                    <div>
+                                        <div class="media">
+                                            <!--<div class="media-left responsive-hide">
+                                                <i class="icon md0-settings" style="font-size:60px" aria-hidden="true"></i>
+                                            </div>-->
+                                            <div class="media-body" style="padding-top: 10px">
+                                                <div class="col-xs-12" ng-if="vm.IsAdmin == true || vm.IsPub == true">
+                                                    <div class="widget">
+                                                        <div class="widget-content bg-white">
+                                                            <div class="counter-label text-capitalize">
+                                                                <div class="col-xs-6">
+                                                                    <md-switch class="md-primary" md-no-ink aria-label="Publier" ng-model="edt.Pub">
+                                                                        Publier
+                                                                    </md-switch>
+                                                                </div>
+                                                                <!--<div class="col-xs-6">
+                                                                    <md-switch class="md-primary" md-no-ink aria-label="Publier" ng-model="edt.Share">
+                                                                        Partager l'ajout de fichier
+                                                                    </md-switch>
+                                                                </div>
+                                                                <div class="col-xs-6">
+                                                                    <md-switch class="md-primary" md-no-ink aria-label="Publier" ng-model="edt.Higlights">
+                                                                        Mettre en évidence
+                                                                    </md-switch>
+                                                                </div>-->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <md-tabs md-dynamic-height md-border-bottom>
+                                                        <md-tab label="R&#233;gions">
+                                                            <md-content class="md-padding">
+                                                                <div class="demo-select-all-checkboxes" flex="100" ng-repeat="region in edt.Post.PostRegions">
+                                                                    <md-checkbox ng-model="region.Checked">
+                                                                        \{{ ::region.Name }}
+                                                                    </md-checkbox>
+                                                                </div>
+                                                            </md-content>
+                                                        </md-tab>
+                                                        <md-tab label="Cat&#233;gories">
+                                                            <md-content class="md-padding">
+                                                                <div class="demo-select-all-checkboxes" flex="100" ng-repeat="cat in edt.Post.PostCategorys">
+                                                                    <md-checkbox ng-model="cat.Checked"
+                                                                                    style="margin-left: \{{ ::edt.CatMarginLeft(cat)}};">
+                                                                        \{{ ::cat.Name }}
+                                                                    </md-checkbox>
+                                                                </div>
+                                                            </md-content>
+                                                        </md-tab>
+                                                        <md-tab label="Tags">
+                                                            <md-content class="md-padding">
+                                                                <div class="demo-select-all-checkboxes" flex="100" ng-repeat="tag in edt.Post.PostTags">
+                                                                    <md-checkbox ng-model="tag.Checked">
+                                                                        \{{ ::tag.Name }}
+                                                                    </md-checkbox>
+                                                                </div>
+                                                            </md-content>
+                                                        </md-tab>
+                                                        <md-tab label="Groupes">
+                                                            <md-content class="md-padding">
+                                                                <div class="demo-select-all-checkboxes" flex="100" ng-repeat="group in edt.Post.PostGroups">
+                                                                    <md-checkbox ng-model="group.Checked">
+                                                                        \{{ ::group.Name }}
+                                                                    </md-checkbox>
+                                                                </div>
+                                                            </md-content>
+                                                        </md-tab>
+                                                    </md-tabs>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </blockquote>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <!--Post files-->
+                <div ng-if="edt.Edition == 4" class="md-dialog-content" layout-padding>
+                    <div class="slidePanel-inner">
+                        <section class="slidePanel-inner-section">
+                            <div class="col-sm-12">
+                                <blockquote>
+                                    <div>
+                                        <div class="media">
+                                            <!--<div class="media-left responsive-hide">
+                                                <i class="icon md0-file" style="font-size:60px" aria-hidden="true"></i>
+                                            </div>-->
+                                            <div class="media-body" style="padding-top: 10px">
+                                                <div class="col-xs-12">
+                                                    <div class="widget">
+                                                        <div class="widget-content bg-white">
+                                                            <div class="counter-label text-capitalize">
+                                                                <div class="counter-label text-uppercase">Sélectionnez ou glissez vos fichiers:<br />
+                                                                    <i>MP3, Wav, MP4, WebM, Ogg, etc...</i></div><br />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="up-buttons">
+                                                        <div ngf-select ngf-drop
+                                                             ng-model="edt.files"
+                                                             ngf-multiple="true"
+                                                             ngf-capture="camera"
+                                                             ngf-validate="{size: {min: 10, max: '650MB'} }"
+                                                             ngf-allow-dir="true"
+                                                             class="drop-box">
+                                                            Clickez ici ou glissez-déposez ici!
+                                                        </div>
+                                                        <br />
+                                                    </div>
+                                                    <ul style="clear:both;padding: 0;padding-top: 10px;margin: 3px 0;clear: both;list-style: none;">
+                                                        <li style="padding: 1px 5px;font-size: smaller;color: grey;" ng-repeat="f in edt.files">
+                                                            <div style="height: 60px;">
+                                                                <div class="progress  progress-lg margin-top-10" data-plugin="progress" style="margin-bottom: 2px;">
+                                                                    <div class="progress-bar \{{edt.ProgressBarClass(f)}}" role="progressbar" aria-valuenow="25" aria-valuemin="15" aria-valuemax="115" style="width: \{{f.progress}}%;">
+                                                                        \{{f.name}}: \{{f.progress}}%
+                                                                    </div>
+                                                                </div>
+                                                                <!--<button class="pull-right btn-raised btn btn-default" style="margin-left: 5px;" ng-click="restart(f);" ng-show="f.error != 0">Restart</button>-->
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </blockquote>
+                                <div class="col-xs-12">
+                                    <md-list ng-cloak-off>
+                                        <!--Post videos-->
+                                        <md-list-item ng-if="edt.PostMediaVideo == true" ng-repeat="mediavideo in edt.Post.PostMediaVideo">
+                                            <p><a href="\{{ ::mediavideo.Url }}" target="_blank">\{{ ::mediavideo.Title }}</a></p>
+                                            <md-checkbox class="md-secondary" ng-model="mediavideo.checked"></md-checkbox>
+                                        </md-list-item>
+                                        <!--Post medias-->
+                                        <md-divider ng-if="edt.PostMedia == true"></md-divider>
+                                        <md-list-item ng-if="edt.PostMedia == true" ng-repeat="media in edt.Post.PostMedia">
+                                            <p><a href="\{{ ::media.Url }}" target="_blank">\{{ ::media.Title }}</a></p>
+                                            <md-checkbox class="md-secondary" ng-model="media.checked"></md-checkbox>
+                                        </md-list-item>
+                                        <!--Post images-->
+                                        <md-divider ng-if="edt.PostImg == true"></md-divider>
+                                        <md-list-item ng-if="edt.PostImg == true" ng-repeat="img in edt.Post.PostImg">
+                                            <p><a href="\{{ ::img.Url }}" target="_blank">\{{ ::img.Title }}</a></p>
+                                            <md-checkbox class="md-secondary" ng-model="img.checked"></md-checkbox>
+                                        </md-list-item>
+                                        <!--Post files-->
+                                        <md-divider ng-if="edt.PostFiles == true"></md-divider>
+                                        <md-list-item ng-if="edt.PostFiles == true" ng-repeat="file in edt.Post.PostFiles">
+                                            <p><a href="\{{ ::file.Url }}" target="_blank">\{{ ::file.Title }}</a></p>
+                                            <md-checkbox class="md-secondary" ng-model="file.checked"></md-checkbox>
+                                        </md-list-item>
+                                        <md-divider></md-divider>
+                                    </md-list>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <!--Post cover-->
+                <div class="md-dialog-content" layout-padding style="\{{edt.CoverEditionStyle}}">
+                    <div class="slidePanel-inner">
+                        <section class="slidePanel-inner-section">
+                            <div class="col-sm-12">
+                                <blockquote>
+                                    <div>
+                                        <div class="media">
+                                            <div class="media-left responsive-hide">
+                                                <i class="icon md0-image" style="font-size:60px" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="media-body" style="padding-top: 10px">
+                                                <div ng-if="edt.PostCover != ''" class="col-xs-12">
+                                                    <div class="widget">
+                                                        <div class="widget-content bg-white">
+                                                            <div class="counter-label text-capitalize">
+                                                                <div layout="row" layout-align="end center">
+                                                                    <div class="counter-label text-uppercase">Couverture originale: <a href="\{{edt.PostCover}}" target="_blank">Cliquez ici</a>.</div>
+                                                                </div>
+                                                                <div layout="row">
+                                                                    <div flex><img src="\{{edt.PostCoverCrop}}" alt="..."></div>
+                                                                </div>
+                                                                <br />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <form name="myForm">
+                                                    <div class="col-xs-12">
+                                                        <div class="widget">
+                                                            <div class="widget-content bg-white">
+                                                                <div class="counter-label text-capitalize">
+                                                                    <div class="counter-label text-uppercase">
+                                                                        <button ngf-select ng-model="edt.picFile" accept="image/*" style="width:100%;">
+                                                                            CHOISISSEZ UNE COUVERTURE
+                                                                        </button>
+                                                                    </div>
+                                                                    <div ngf-drop ng-model="edt.picFile" ngf-pattern="image/*" class="cropArea">
+                                                                        <img-crop image="edt.picFile | ngfDataUrl"
+                                                                                  result-image="edt.croppedDataUrl"
+                                                                                  result-image-size="500">
+                                                                        </img-crop>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12">
+                                                        <ul style="clear:both;padding: 0;padding-top: 10px;margin: 3px 0;clear: both;list-style: none;"></ul>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </blockquote>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </md-content>
+        </md-sidenav>
+
+        <!--Post filtering-->
+        <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="PostSettingsSide"
+                    md-disable-scroll-target="#elmBody"
+                    style="max-width:\{{vm.SideMaxWidth}};width: 100%;">
+            <md-content>
+                <!--Post tool bar-->
+                <md-toolbar class="md-theme-indigo">
+                    <div layout="row">
+                        <h1 class="md-toolbar-tools">Filtrer...</h1>
+                        <span flex></span>
+                        <md-button class="md-icon-button"
+                                   ng-click="vm.SidePostClose('PostSettingsSide')">
+                            <md-icon md-font-set="material-icons">close</md-icon>
+                        </md-button>
+                    </div>
+                </md-toolbar>
+                <div class="md-dialog-content" layout-padding>
+                    <div class="slidePanel-inner">
+                        <section class="slidePanel-inner-section">
+                            <div class="forum-content col-sm-12">
+                                <div class="media">
+                                    <div class="media-body">
+                                        <div class="col-xs-12">
+                                            <div class="col-xs-12">
+                                                <md-input-container ng-if="vm.IsContributor == true" class="md-block" flex-gt-sm style="padding-bottom:0px;margin-bottom:0px;">
+                                                    <md-checkbox md-no-ink ng-model="vm.SelectedMine" ng-change="vm.OnMineClick()" class="md-primary pull-right">Mes publications</md-checkbox>
+                                                </md-input-container>
+                                            </div>
+                                            <div class="col-xs-12">
+                                                <md-select ng-model="vm.SelectedState"
+                                                           md-on-close="vm.OnStateClick()">
+                                                    <md-option ng-value="-1">Tous les posts</md-option>
+                                                    <md-option ng-value="0">Les posts en &#233;dition</md-option>
+                                                    <md-option ng-value="1">Les posts publi&#233;s</md-option>
+                                                    <md-option ng-value="2">Les posts en corbeille</md-option>
+                                                </md-select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <md-tabs md-dynamic-height md-border-bottom>
+                                                <md-tab ng-if="vm.Cats != null && vm.Cats.length != 0" label="Cat&#233;gories">
+                                                    <md-content class="md-padding">
+                                                        <div class="demo-select-all-checkboxes" flex="100">
+                                                            <md-button ng-if="vm.SelectedCategoryId != 0"
+                                                                       class="md-raised md-warn"
+                                                                       style="margin-left: 0px;"
+                                                                       ng-click="vm.OnCategoryClick(0);"><md-icon md-font-set="material-icons" style="margin-right: 10px;">cancel</md-icon>Désactiver le filtre</md-button
+                                                        </div>
+                                                        <div class="demo-select-all-checkboxes" flex="100" ng-repeat="cat in vm.Cats">
+                                                            <md-button ng-class="(cat.Id == vm.SelectedCategoryId) ? 'md-raised md-primary' : ''"
+                                                                       style="margin-left: \{{ ::vm.CatMarginLeft(cat)}};"
+                                                                       ng-click="vm.OnCategoryClick(cat.Id);"><md-icon md-font-set="material-icons" style="margin-right: 10px;">turned_in</md-icon> \{{ ::cat.StringValue }}</md-button>
+                                                        </div>
+                                                    </md-content>
+                                                </md-tab>
+                                                <md-tab ng-if="vm.Tags != null && vm.Tags.length != 0" label="Tags">
+                                                    <md-content class="md-padding">
+                                                        <div class="demo-select-all-checkboxes" flex="100">
+                                                            <md-button ng-if="vm.SelectedTagId != 0"
+                                                                       class="md-raised md-warn"
+                                                                       style="margin-left: 0px;"
+                                                                       ng-click="vm.OnTagClick(0);"><md-icon md-font-set="material-icons" style="margin-right: 10px;">cancel</md-icon>Désactiver le filtre</md-button>
+                                                        </div>
+                                                        <div class="demo-select-all-checkboxes" flex="100" ng-repeat="tag in vm.Tags">
+                                                            <md-button ng-class="(tag.Id == vm.SelectedTagId) ? 'md-raised md-primary' : ''"
+                                                                       ng-click="vm.OnTagClick(tag.Id);"><md-icon md-font-set="material-icons" style="margin-right: 10px;">label</md-icon>\{{ ::tag.StringValue }}</md-button>
+                                                        </div>
+                                                    </md-content>
+                                                </md-tab>
+                                                <md-tab ng-if="vm.Groups != null && vm.Groups.length != 0" label="Groupes">
+                                                    <md-content class="md-padding">
+                                                        <div class="demo-select-all-checkboxes" flex="100">
+                                                            <md-button ng-if="vm.SelectedGroupId != 0"
+                                                                       class="md-raised md-warn"
+                                                                       style="margin-left: 0px;"
+                                                                       ng-click="vm.OnGroupClick(0);"><md-icon md-font-set="material-icons" style="margin-right: 10px;">cancel</md-icon>Désactiver le filtre</md-button>
+                                                        </div>
+                                                        <div class="demo-select-all-checkboxes" flex="100" ng-repeat="group in vm.Groups">
+                                                            <md-button ng-class="(group.Id == vm.SelectedGroupId) ? 'md-raised md-primary' : ''"
+                                                                       ng-click="vm.OnGroupClick(group.Id);"><md-icon md-font-set="material-icons" style="margin-right: 10px;">group</md-icon>\{{ ::group.StringValue }}</md-button>
+                                                        </div>
+                                                    </md-content>
+                                                </md-tab>
+                                            </md-tabs>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </md-content>
+        </md-sidenav>
+
+        <!--List of posts-->
+        <md-list flex>
+            <!--Filters-->
+            <!--<md-subheader ng-show="vm.ShowFilter" class="md-no-sticky" style="padding-top:0px;">
+                <div layout-gt-sm="row" layout-padding style="padding-bottom:0px;">
+                    <md-input-container ng-if="vm.Cats != null" class="md-block" flex-gt-sm>
+                        <label>Cat&#233;gories</label>
+                        <md-select ng-model="vm.SelectedCategoryId"
+                                   md-on-close="vm.OnCategoryChange()">
+                            <md-option ng-value="0">---</md-option>
+                            <md-option ng-value="cat.Id" ng-repeat="cat in vm.Cats">
+                                \{{::cat.StringValue}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container ng-if="vm.Tags != null" class="md-block" flex-gt-sm>
+                        <label>Tags</label>
+                        <md-select ng-model="vm.SelectedTagId"
+                                   md-on-close="vm.OnTagChange()">
+                            <md-option ng-value="0">---</md-option>
+                            <md-option ng-value="tag.Id" ng-repeat="tag in vm.Tags">
+                                \{{::tag.StringValue}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container ng-if="vm.Groups != null" class="md-block" flex-gt-sm>
+                        <label>Groupes</label>
+                        <md-select ng-model="vm.SelectedGroupId"
+                                   md-on-close="vm.OnGroupChange()">
+                            <md-option ng-value="0">---</md-option>
+                            <md-option ng-value="group.Id" ng-repeat="group in vm.Groups">
+                                \{{::group.StringValue}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container ng-if="vm.IsContributor" class="md-block" flex-gt-sm>
+                        <label>Publication</label>
+                        <md-select ng-model="vm.SelectedState"
+                                   md-on-close="vm.OnStateChange()">
+                            <md-option ng-value="-1">Tous les posts</md-option>
+                            <md-option ng-value="0">Les posts en &#233;dition</md-option>
+                            <md-option ng-value="1">Les posts publi&#233;s</md-option>
+                            <md-option ng-value="2">Les posts en corbeille</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div layout-gt-sm="row" layout-padding>
+                    <md-input-container ng-if="vm.IsContributor == true" class="md-block" flex-gt-sm style="padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;">
+                        <md-checkbox md-no-ink ng-model="vm.SelectedMine" ng-change="vm.OnMineChange()" class="md-primary pull-left">Mes publications</md-checkbox>
+                    </md-input-container>
+                </div>
+            </md-subheader>-->
+            <!-- Posts -->
+            <md-list-item class="md-2-line" ng-repeat="post in vm.Posts.data" ng-click="vm.SidePostOpen('PostEditSide', post.Id)">
+                <div layout-gt-sm="column">
+                    <!--<div ng-if="::vm.Type == 2" layout="column" flex="100">
+                        Month Date
+                    </div>-->
+                    <div layout="row" flex="100">
+                        <img ng-if="::post.CoverCrop != ''" ng-src="\{{::post.CoverCrop}}" class="md-avatar">
+                        <div class="md-list-item-text" layout="column">
+                            <h4 class="media-heading" 
+                                style="text-shadow: rgba(0,0,0,.15) 0 0 1px;font-weight: 400;line-height: 1.2;color: #424242;font-size: 18px;\{{::vm.StyleTitle(post)}}"
+                                ng-bind-html="::post.Title"></h4>
+                            <p style="color: #9e9e9e;">
+                                <span ng-if="::post.Private == true" class="started">
+                                    <md-icon md-font-set="material-icons" style="margin-top: 5px;color: #9e9e9e;font-size: 14px;width:15px;min-width:15px;">https</md-icon></span>
+                                <span ng-if="::post.StartDate != null" class="tags">
+                                    <md-icon md-font-set="material-icons" style="margin-top: 5px;color: #9e9e9e;font-size: 14px;width:15px;min-width:15px;">date_range</md-icon> \{{::post.StartDateString}}</span>
+                                <span style="margin-left:5px;">il y a \{{::post.Age}} \{{::post.AgeUnit}}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </md-list-item>
+        </md-list>
+
+        <!--Filters dialog-->
+        <!--<div style="visibility: hidden">
+            <div class="md-dialog-container" id="myDialog">
+                <md-dialog layout-padding>
+                    <div layout-gt-lg="row" layout-padding style="padding-bottom:0px;">
+                        <md-input-container ng-if="vm.Cats != null" class="md-block" flex-gt-sm>
+                            <label>Cat&#233;gories</label>
+                            <md-select ng-model="vm.SelectedCategoryId"
+                                       md-on-close="vm.OnCategoryChange()">
+                                <md-option ng-value="0">---</md-option>
+                                <md-option ng-value="cat.Id" ng-repeat="cat in vm.Cats">
+                                    \{{::cat.StringValue}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                        <md-input-container ng-if="vm.Tags != null" class="md-block" flex-gt-sm>
+                            <label>Tags</label>
+                            <md-select ng-model="vm.SelectedTagId"
+                                       md-on-close="vm.OnTagChange()">
+                                <md-option ng-value="0">---</md-option>
+                                <md-option ng-value="tag.Id" ng-repeat="tag in vm.Tags">
+                                    \{{::tag.StringValue}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                        <md-input-container ng-if="vm.Groups != null" class="md-block" flex-gt-sm>
+                            <label>Groupes</label>
+                            <md-select ng-model="vm.SelectedGroupId"
+                                       md-on-close="vm.OnGroupChange()">
+                                <md-option ng-value="0">---</md-option>
+                                <md-option ng-value="group.Id" ng-repeat="group in vm.Groups">
+                                    \{{::group.StringValue}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                        <md-input-container ng-if="vm.IsAdmin == true || vm.IsPub == true" class="md-block" flex-gt-sm>
+                            <label>Publication</label>
+                            <md-select ng-model="vm.SelectedState"
+                                       md-on-close="vm.OnStateChange()">
+                                <md-option ng-value="-1">Tous les posts</md-option>
+                                <md-option ng-value="0">Les posts en &#233;dition</md-option>
+                                <md-option ng-value="1">Les posts publi&#233;s</md-option>
+                                <md-option ng-value="2">Les posts en corbeille</md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                    <div layout-gt-sm="row" layout-padding>
+                        <md-input-container ng-if="vm.IsContributor == true" class="md-block" flex-gt-sm style="padding-top:0px;padding-bottom:0px;margin-top:0px;margin-bottom:0px;">
+                            <md-checkbox md-no-ink ng-model="vm.SelectedMine" ng-change="vm.OnMineChange()" class="md-primary pull-left">Mes publications</md-checkbox>
+                        </md-input-container>
+                    </div>
+                </md-dialog>
+            </div>
+        </div>-->
+
+        <!--List pagination-->
+        <md-menu layout-align="end center" class="site-action-topright-off">
+            <md-button ng-click="$mdOpenMenu($event)" class="md-raised md-primary" >
+                <md-icon md-font-set="material-icons">expand_more</md-icon><span flex>Page \{{vm.CurrentPage + 1}}</span>
+            </md-button>
+            <md-menu-content width="3">
+                <md-menu-item ng-repeat="page in vm.Posts.pagination">
+                    <md-button ng-click="vm.OnPageChange(page)">Page \{{page + 1}}</md-button>
+                </md-menu-item>
+            </md-menu-content>
+        </md-menu>
+        
+        <!--List buttons-->
+        <!--<md-fab-speed-dial ng-hide="vm.hidden" md-direction="up" md-open="vm.isOpen"
+                           class="md-scale md-fab-top-right" ng-class="{ 'md-hover-full': vm.hover }"
+                           ng-mouseenter="vm.isOpen=true" ng-mouseleave="vm.isOpen=false">
+            <md-fab-trigger>
+                <md-button aria-label="menu" class="md-fab md-warn">
+                    <md-tooltip md-direction="top" md-visible="vm.tooltipVisible">Menu</md-tooltip>
+                    <md-icon md-svg-src="img/icons/menu.svg" aria-label="menu"></md-icon>
+                </md-button>
+            </md-fab-trigger>
+
+            <md-fab-actions>
+                <div ng-repeat="item in vm.items">
+                    <md-button aria-label="{{item.name}}" class="md-fab md-raised md-mini"
+                               ng-click="vm.openDialog($event, item)">
+                        <md-tooltip md-direction="{{item.direction}}" md-visible="vm.tooltipVisible"
+                                    md-autohide="false">
+                            {{item.name}}
+                        </md-tooltip>
+                        <md-icon md-font-set="material-icons">mode_edit</md-icon>
+                    </md-button>
+                </div>
+            </md-fab-actions>
+        </md-fab-speed-dial>-->
+
+        <md-button ng-if="vm.IsContributor" class="site-action md-fab md-primary" 
+                   ng-click="vm.SidePostOpen('PostEditSide', 0)"
+                   style="right:100px;">
+            <md-tooltip md-direction="top">Ajouter un post</md-tooltip>
+            <md-icon md-font-set="material-icons" >add</md-icon>
+        </md-button>
+        <md-button class="site-action md-fab md-primary"
+                   ng-click="vm.DialogSettingsOpen($event)">
+            <md-tooltip md-direction="top">Modifier la liste</md-tooltip>
+            <md-icon md-font-set="material-icons" >more_vert</md-icon>
+        </md-button>
+
+    {{/content}}
+
+{{/extend}}

@@ -1,0 +1,47 @@
+{
+  "html": "../www/wwwroot/admin",
+  "assets": "../www/wwwroot/admin/assets",
+  "destination": {
+    "css": "../www/wwwroot/admin/assets/css",
+    "js": "../www/wwwroot/admin/assets/js",
+    "skins": "../www/wwwroot/admin/assets/skins",
+    "examples": "../www/wwwroot/admin/assets/examples",
+    "fonts": "../www/wwwroot/admin/global/fonts"
+  },
+  "source": {
+    "js": "src/js",
+    "less": "src/less",
+    "skins": "src/skins",
+    "examples": "src/examples",
+    "fonts": "global/src/fonts"
+  },
+  "templates": {
+    "data": "src/templates/data",
+    "helpers": "src/templates/helpers",
+    "partials": "src/templates/partials",
+    "pages": "src/templates/pages"
+  },
+  "global": {
+    "path": "wwwroot/admin/global",
+    "fonts": "wwwroot/admin/global/fonts",
+    "vendor": "wwwroot/admin/global/vendor",
+    "css": "wwwroot/admin/global/css",
+    "js": "wwwroot/admin/global/js",
+    "less": "global/src/less",
+    "skins": "global/src/skins"
+  },
+  "bootstrap": {
+    "less": "global/src/less/bootstrap",
+    "mixins": "global/src/less/mixins"
+  },
+  "autoprefixerBrowsers": [
+    "Android 2.3",
+    "Android >= 4",
+    "Chrome >= 20",
+    "Firefox >= 24",
+    "Explorer >= 8",
+    "iOS >= 6",
+    "Opera >= 12",
+    "Safari >= 6"
+  ]
+}

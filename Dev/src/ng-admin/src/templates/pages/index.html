@@ -1,0 +1,260 @@
+﻿{{#extend "layout-empty"}}
+
+{{#content "body"}}
+
+<!DOCTYPE html>
+<html ng-app="app" ng-controller="DocsCtrl" lang="en" ng-strict-di>
+<head>
+    <base href="/admin/">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta name="description" content="\{{::Domain}}">
+    <meta name="author" content="\{{::Domain}}">
+
+    <title>\{{::Domain}}</title>
+        
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/lib/summernote.css">
+    <link rel="stylesheet" href="/lib/ng-img-crop.css" />
+    <link rel='stylesheet prefetch' href='/lib/angular-material.min.css'>
+    <link rel="stylesheet" href="/lib/material-docs.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link rel="apple-touch-icon" href="{{assets}}/images/apple-touch-icon.png">
+    <link rel="shortcut icon" href="{{assets}}/images/favicon.ico">
+
+    <style>
+        .site-action {
+            position: fixed;
+            right: 32px;
+            bottom: 32px;
+        }
+        .site-action-left {
+            position: fixed;
+            left: 32px;
+            bottom: 32px;
+        }
+        .site-action-topright {
+            position: fixed;
+            right: 15px;top: 47px;
+            /*right: 167px;bottom: 41px;*/
+        }
+        .cropArea {
+            background: #E4E4E4;
+            overflow: hidden;
+            width: 100%;
+            height: 350px;
+        }
+        .bottomSheetdemoBasicUsage .md-inline-list-icon-label {
+          display: inline-block;
+          padding-left: 10px;
+          padding-right: 10px;
+          margin-top: -10px;
+          height: 24px;
+          vertical-align: middle; }
+        .bottomSheetdemoBasicUsage .md-grid-item-content {
+          height: 90px;
+          padding-top: 10px; }
+        .bottomSheetdemoBasicUsage .md-grid-item-content md-icon {
+          height: 48px;
+          width: 48px; }
+        .bottomSheetdemoBasicUsage .md-grid-text {
+          padding-bottom: 5px; }
+        .bottomSheetdemoBasicUsage md-list-item, .bottomSheetdemoBasicUsage md-list-item .md-list-item-inner {
+          min-height: 48px; }
+        .bottomSheetdemoBasicUsage h2 {
+          line-height: 36px;
+          padding-top: 10px; }
+        .bottomSheetdemoBasicUsage .md-subheader .md-subheader-inner {
+          padding: 0; }
+        .bottomSheetdemoBasicUsage md-toast .md-toast-content {
+          background-color: #B14141; }
+        .bottomSheetdemoBasicUsage md-toast > * {
+          font-weight: bolder; }
+        .drop-box {
+            background: #F8F8F8;
+            border: 1px dashed #DDD;
+            width: 100%;
+            text-align: center;
+            padding: 50px 10px;
+            margin-left: 10px;
+        }
+        .drop-box.dragover {
+            border: 1px dashed blue;
+        }
+        .drop-box.dragover-err {
+            border: 1px dashed red;
+        }
+    </style>
+</head>
+
+<body class="docs-body" layout="row" ng-cloak>
+    <!--Menu bar-->
+    <md-sidenav class="site-sidenav md-sidenav-left md-whiteframe-z2"
+                md-component-id="left" hide-print
+                md-is-locked-open="$mdMedia('gt-sm')">
+        <!--Menu header-->
+        <header class="nav-header">
+            <a ng-href="/" class="docs-logo">
+                <img src="/logo.png" alt="" />
+            </a>
+            <br />
+        </header>
+        <!--???-->
+        <!--<ul class="skip-links">
+            <li class="md-whiteframe-z2">
+                <md-button ng-click="focusMainContent($event)" href="#">Skip to content</md-button>
+            </li>
+        </ul>-->
+        <!---Menu list-->
+        <md-content flex role="navigation">
+            <ul class="docs-menu">
+                <li ng-repeat="section in menu.sections" class="parent-list-item \{{section.className || ''}}" ng-class="{'parentActive' : isSectionSelected(section)}">
+                    <!--<h2 class="menu-heading md-subhead" ng-if="section.type === 'heading'" id="heading_\{{ section.name | nospace }}">
+                        \{{section.name}}
+                    </h2>-->
+                    <menu-link section="section" ng-if="section.type === 'link' && !section.hidden"></menu-link>
+                    <!--<menu-toggle section="section" ng-if="section.type === 'toggle' && !section.hidden"></menu-toggle>
+                    <ul ng-if="section.children" class="menu-nested-list">
+                        <li ng-repeat="child in section.children" ng-class="{'childActive' : isSectionSelected(child)}">
+                            <menu-link section="child" ng-if="child.type === 'link'"></menu-link>
+                            <menu-toggle section="child" ng-if="child.type === 'toggle'"></menu-toggle>
+                        </li>
+                    </ul>-->
+                </li>
+            </ul>
+        </md-content>
+    </md-sidenav>
+    
+    <div layout="column" tabIndex="-1" role="main" flex>
+        <!--Tool bar-->
+        <md-toolbar class="md-whiteframe-glow-z1 site-content-toolbar">
+            <div class="md-toolbar-tools docs-toolbar-tools" tabIndex="-1" style="max-width: 100%;">
+                <div layout="row" flex class="fill-height">
+                    <!--Menu button-->
+                    <md-button class="md-icon-button" ng-click="openMenu()" hide-gt-sm>
+                        <md-icon md-svg-src="/lib/material-docs-ic_menu_24px.svg"></md-icon>
+                    </md-button>
+                    <!--Title-->
+                    <h2 class="md-toolbar-item md-breadcrumb md-headline">\{{Domain}}
+                        <span ng-if="regionName != null && regionName != 'All'" hide-xs>
+                            <md-icon md-font-set="material-icons">chevron_right</md-icon>
+                            <span class="md-breadcrumb-page" style="font-size:18px;padding-top:-8px;">\{{regionName}}</span>
+                        </span>
+                    </h2>
+                    <span flex></span>
+                    <!--Search button-->
+                    <md-button layout-align="end center" ng-click="togleSearch()" class="md-icon-button">
+                        <md-icon md-font-set="material-icons">search</md-icon>
+                    </md-button>
+                    <!--Region button-->
+                    <md-menu layout-align="end center" ng-controller="RegionsController as vm">
+                        <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button">
+                            <md-icon md-font-set="material-icons">language</md-icon><span hide-xs flex style="font-size:9px;">\{{vm.Current.StringValue}}</span>
+                        </md-button>
+                        <md-menu-content width="4">
+                            <md-menu-item ng-repeat="region in vm.Regions">
+                                <md-button ng-click="vm.ChangeRegion(region)">
+                                    <md-icon md-font-set="material-icons">language</md-icon>\{{region.StringValue}}
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                    <!--User button-->
+                    <md-menu layout-align="end center" ng-controller="UserInfoController as vm">
+                        <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button">
+                            <md-icon md-font-set="material-icons">account_box</md-icon>
+                        </md-button>
+                        <md-menu-content>
+                            <md-menu-item>
+                                <md-button ng-click="vm.Manage()">
+                                    <md-icon md-font-set="material-icons">info_outline</md-icon>\{{vm.UserName}}
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button>
+                                    <md-icon md-font-set="material-icons">group</md-icon>\{{vm.UserGroup}}
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-divider></md-menu-divider>
+                            <md-menu-item>
+                                <md-button ng-click="vm.Logout()">
+                                    <md-icon md-font-set="material-icons">exit_to_app</md-icon>Se déconnecter
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                </div>
+            </div>
+            <!--Search section-->
+            <div ng-show="searchOpen" class="md-toolbar-tools docs-toolbar-tools" tabIndex="-1" style="max-width: 100%;">
+                <div layout="row" flex class="fill-height">
+                    <md-input-container md-no-float class="md-block" flex="100" style="font-size: 15px;">
+                        <input ng-model="searchText" placeholder="Texte de recherche" ng-keyup="$event.keyCode == 13 ? executeSearch() : null">
+                    </md-input-container>
+                    <span flex></span>
+                    <md-button layout-align="end center" ng-click="closeSearch()" class="md-icon-button" style="top: -8px;">
+                        <md-icon md-font-set="material-icons">close</md-icon>
+                    </md-button>
+                </div>
+            </div>
+        </md-toolbar>
+
+        <!--Loading bar-->
+        <md-progress-linear ng-disabled="!navs.ShowProgress" ng-if="navs.ShowProgress" md-mode="indeterminate"></md-progress-linear>
+
+        <!--Content-->
+        <md-content md-scroll-y layout="column" flex id="elmBody">
+            <div ng-view layout-padding-off flex="noshrink"></div>
+
+            <div layout="row" flex="noshrink" layout-align="center center"
+                 style="color: #757575;font-weight: 300;">
+                <div id="license-footer" flex>
+                    &copy; \{{thisYear}} \{{::Domain}}
+                </div>
+            </div>
+        </md-content>
+    </div>
+
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/lib/summernote.min.js"></script>
+    <script src="/lib/summernote-fr-FR.js"></script>
+    <script src="/lib/angular.min.js"></script>
+    <script src="/lib/angular-sanitize.js"></script>
+    <script src="/lib/angular-cookies.js"></script>
+    <script src="/lib/angular-animate.min.js"></script>
+    <script src="/lib/angular-aria.min.js"></script>
+    <script src="/lib/angular-messages.min.js"></script>
+    <script src="/lib/angular-ui-router.min.js"></script>
+    <script src="/lib/angular-animate.min.js"></script>
+    <script src="/lib/angular-route.min.js"></script>
+    <script src="/lib/angular-locale_fr-fr.js"></script>
+
+    <script src="/lib/angular-material.min.js"></script>
+
+    <script src="/lib/angular-summernote.min.js"></script>
+    <script src="/lib/summernote-fr-FR.js"></script>
+    <!--<script src="/lib/swfobject.js"></script>-->
+    <script src="/lib/ng-file-upload-shim.min.js"></script>
+    <script src="/lib/ng-file-upload.min.js"></script>
+    <script src="/lib/ng-img-crop.js"></script>
+    
+    <script src="/admin/assets/js/app/modules/module.min.js"></script>
+    <script src="/admin/assets/js/app/services/service.min.js"></script>
+    <script src="/admin/assets/js/app/services/service.min.js"></script>
+    <script src="/admin/assets/js/app/directives/directive.min.js"></script>
+    <script src="/admin/assets/js/app/controllers/controller.min.js"></script>
+    <script src="/admin/assets/js/app/controllers/controller.min.js"></script>
+    <script src="/admin/assets/js/app/filters/filter.min.js"></script>
+    <script src="/admin/assets/js/app/app.min.js"></script>
+    <!--<script src="/lib/material-docs-demo-scripts.js"></script>-->
+</body>
+</html>
+
+{{/content}}
+
+{{/extend}}

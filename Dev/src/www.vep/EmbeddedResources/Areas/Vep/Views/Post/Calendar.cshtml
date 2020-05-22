@@ -1,0 +1,79 @@
+﻿@using Models;
+@using Services;
+@{
+    // Get app context...
+    WcmsAppContext appctx = (WcmsAppContext)ViewContext.RouteData.Values["appcontext"];
+    IEnumerable<Post> posts = (IEnumerable<Post>)ViewBag.Posts;
+}
+
+@section head {
+
+}
+
+<section class="blog-wrapper">
+    <div class="container">
+        <div id="content" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                @if ((ViewBag.TagsMenus?.Count ?? 0) > 0)
+                {
+                    <div class="calloutbox">
+                        <div class="col-lg-12">
+                            <p class="lead">
+                                @foreach (string itemLink in ViewBag.TagsMenus)
+                                {
+                                    @itemLink
+                                }
+                            </p>
+                        </div>
+                    </div>
+                }
+                <div class="blog-masonry">
+                    @if ((posts?.Count() ?? 0) > 0)
+                    {
+                        int iDex = 0;
+                        foreach (Post post in posts)
+                        {
+                            string postCover = post.GetCoverUrl(true);
+                            string postUrl = post.GetUrl(appctx);
+                            iDex += 1;
+                            <div class="col-sm-4 @(((iDex % 3 == 1) ? "first" : ((iDex % 3 == 2) ? "" : "last")))">
+                                <div class="blog-carousel">
+                                    <div class="entry" style="@((postCover == null) ? "visibility:hidden;width:0px;" : "" )">
+                                        <a class="st" rel="bookmark" href="@postUrl"><img src="@postCover" alt="" class="img-responsive"></a>
+                                        <div class="post-type">
+                                            <i class="fa fa-picture-o"></i>
+                                        </div>
+                                    </div>
+                                    <div class="blog-carousel-header">
+                                        <h3><a title="" href="@postUrl"> @post.GetTitle(-1)</a></h3>
+                                        <div class="blog-carousel-meta">
+                                            <span><i class="fa fa-calendar"></i> @post.GetPublicationShortDate()</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <div class="clearfix"></div>
+                <hr>
+
+                <asp:Menu ID="Pager" CssClass="pagination_wrapper" runat="server"
+                            Orientation="Horizontal"
+                            ItemWrap="True"
+                            StaticDisplayLevels="2"
+                            StaticSubMenuIndent="0px">
+                    <StaticMenuStyle CssClass="pagination" />
+                    <StaticSelectedStyle CssClass="" BackColor="#4dA2D8" ForeColor="White" BorderColor="#4dA2D8" BorderStyle="Solid" BorderWidth="1px" HorizontalPadding="20px" VerticalPadding="10px" Font-Bold="true" />
+                    <StaticMenuItemStyle CssClass="" BackColor="#eeeeee" ForeColor="Black" BorderColor="#ededed" BorderStyle="Solid" BorderWidth="1px" HorizontalPadding="20px" VerticalPadding="10px" />
+                    <StaticHoverStyle CssClass="" BackColor="#4dA2D8" ForeColor="White" />
+                </asp:Menu>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+
+}

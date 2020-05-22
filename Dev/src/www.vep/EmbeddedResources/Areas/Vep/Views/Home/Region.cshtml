@@ -1,0 +1,450 @@
+﻿@using Models;
+@using Services;
+@{
+    int rtrtDx = 0;
+    int ltstDx = 0;
+    // Get app context...
+    WcmsAppContext appctx = (WcmsAppContext)ViewContext.RouteData.Values["appcontext"];
+    List<Post> rtrts = ((IEnumerable<Post>)ViewBag.Retaites)?.ToList();
+    IEnumerable<Post> evnts = (IEnumerable<Post>)ViewBag.Events;
+    IEnumerable<Post> anncs = (IEnumerable<Post>)ViewBag.Announcements;
+    IEnumerable<Post> ltsts = (IEnumerable<Post>)ViewBag.Latests;
+    string regionuri = (appctx?.Region?.StringValue == null) ? "/" : $"/{Framework.String.RemoveAccents(appctx?.Region?.StringValue).ToLower()}/";
+    string emailContact = $"{((appctx?.Region?.StringValue == null) ? appctx?.Module?.Name?.ToLower()?.Replace(" ", string.Empty) : appctx?.Region?.StringValue?.ToLower())}@{appctx?.Site?.Domain}";
+
+    string mailing_link_param = null;
+    try
+    {
+        mailing_link_param = appctx?.Configuration[$"{appctx?.Module.Name}:mailing_link_param"];
+    }
+    catch (Exception e) { }
+}
+
+@section head {
+    <link rel="start" href="http://www.vieetpartage.com">
+    <style type="text/css">
+        #owl_blog_two_line2 .blog-carousel {
+            padding: 0 10px;
+        }
+
+        #owl_blog_two_line2 .owl-controls .owl-prev,
+        #owl_blog_two_line2 .owl-controls .owl-next {
+            color: #fff;
+            cursor: pointer;
+            font-size: 21px;
+            line-height: 25px;
+            text-align: center;
+            width: 25px;
+            height: 28px;
+            background: #222;
+            border-radius: 3px;
+        }
+
+        #owl-testimonial-widget2 .img-circle {
+            border: 3px solid #fff;
+            width: 100px;
+        }
+
+        #owl-testimonial-widget2 h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+            padding: 0;
+        }
+
+        #owl-testimonial-widget2 .img-circle {
+            border-color: #4dA2D8;
+        }
+
+        #owl-testimonial-widget2 .owl-controls .owl-prev:hover,
+        #owl-testimonial-widget2 .owl-controls .owl-next:hover {
+            background-color: #4dA2D8;
+        }
+
+        #owl-testimonial-widget2 .blog-carousel {
+            padding: 0 10px;
+        }
+
+        #owl-testimonial-widget2 .owl-controls .owl-prev,
+        #owl-testimonial-widget2 .owl-controls .owl-next {
+            color: #fff;
+            cursor: pointer;
+            font-size: 21px;
+            line-height: 25px;
+            text-align: center;
+            width: 25px;
+            height: 28px;
+            background: #222;
+            border-radius: 3px;
+        }
+    </style>
+}
+
+<section id="one-parallax" class="parallax" style="background-image: url('/jollyany/images/vep/slider2.jpg');" data-stellar-background-ratio="0.6" data-stellar-vertical-offset="20">
+    <div class="custom-overlay-off" style="background-color:rgba(247,194,33,0.3);background-color: rgba(0,0,0,0.6);margin:0px;">
+        <div class="container">
+            <div class="services_vertical">
+                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 first">
+                    <div class="service_vertical_box">
+                        <div class="service-icon"><a href="/presentation/pg0/pt1"><i class="fa fa-lightbulb-o fa-4x" style="color: white;"></i></a></div>
+                        <h3><a href="@(regionuri)presentation/pg0/pt1" style="color: white !important;">Présentation</a></h3>
+                        <p><a href="@(regionuri)presentation/pg0/pt1" style="color: white !important;">Le groupe Vie et Partage est une association de fidèles créée en 2000 pour répondre à la soif chez les fidèles catholiques d’une catéchèse vivante.</a></p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                    <div class="service_vertical_box">
+                        <div class="service-icon"><a href="/mot-du-berger/pg0/pt2"><i class="fa fa-user fa-4x" style="color: white;"></i></a></div>
+                        <h3><a href="@(regionuri)mot-du-berger/pg0/pt2" style="color: white !important;">Mot du moderateur</a></h3>
+                        <p><a href="@(regionuri)mot-du-berger/pg0/pt2" style="color: white !important;">Comment est née l’idée de ce groupe Vie et Partage ? Pour répondre à cette question il est bon de connaître ceux qui en ont eu l’initiative.</a></p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                    <div class="service_vertical_box">
+                        <div class="service-icon"><a href="/activites/pg0/pt265"><i class="fa fa-tablet fa-4x" style="color: white;"></i></a></div>
+                        <h3><a href="@(regionuri)activites/pg0/pt265" style="color: white !important;">Nos activités</a></h3>
+                        <p><a href="@(regionuri)activites/pg0/pt265" style="color: white !important;">Le mouvement a pour objectif de raviver la foi des baptisés et accorde une importance fondamentale à la rencontre personnelle avec Jésus-Christ.</a></p>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</section>
+
+@if ((anncs?.Count() ?? 0) > 0)
+{
+    <section class="alert-danger" style="padding: 20px 0;">
+        <div class="container">
+            <div id="content" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding-bottom:0px;">
+                <div class="row">
+                    <div class="blog-masonry">
+                        <div class="col-lg-12">
+                            <div class="doc">
+                                <div class="alert alert-danger" style="border:none;margin:0px;">
+                                    @foreach (Post annc in anncs)
+                                    {
+                                        <table>
+                                            <tr valign="top">
+                                                <td><i class="fa fa-warning" style="font-size: 50px;padding-right:10px;"></i></td>
+                                                <td style="padding-top:10px;padding-bottom:10px;">
+                                                    <a href="@annc.GetUrl(appctx)" class="alert-link">@Html.Raw(annc.GetTitle(-1))</a>
+                                                    <div class="blog-carousel-meta">
+                                                        <span><i class="fa fa-rss"></i> @annc.GetPublicationDate()</span>
+                                                        @if (ViewBag.ForAllRegion == true) { <span style="font-style:italic;"><i class="fa fa-globe"></i> @annc.GetRegionsAsString(appctx)</span> }
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </section>
+}
+
+@if ((rtrts?.Count() ?? 0) > 0 && (evnts?.Count() ?? 0) > 0)
+{
+    <section class="blog-wrapper">
+        <div class="container">
+            @if ((rtrts?.Count() ?? 0) > 0)
+            {
+                <div id="content" class="col-lg-8 col-md-8 col-sm-6 col-xs-12" style="padding-bottom:10px;">
+                    <div class="widget">
+                        <div class="title"><h2><a href="@(regionuri)retraites-et-pelerinages/pg10">Retraites <i class="fa fa-external-link" style="font-size: 15px;"></i></a></h2></div>
+                        <div class="row reviews_widget">
+                            @foreach (Post evnt in rtrts)
+                            {
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 hidden-sm hidden-xs">
+                                    <div class="col-sm-12">
+                                        <div class="blog-carousel">
+                                            @if (evnt.Cover != null)
+                                            {
+                                                <div class="entry">
+                                                    <img src="@evnt.GetCoverUrl(true)" alt="" class="img-responsive">
+                                                </div>
+                                            }
+                                            <div class="blog-carousel-header" style="margin-bottom:20px;">
+                                                <h3><a href="@evnt.GetUrl(appctx)">@Html.Raw(evnt.GetTitle(70))</a></h3>
+                                                <div class="blog-carousel-meta">
+                                                    <span><i class="fa fa-calendar"></i> @evnt.GetStartDate(true)</span>
+                                                    <span style="font-style:italic;"><i class="fa fa-globe"></i> @evnt.GetRegionsAsString(appctx)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                break;
+                            }
+
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                @{ rtrtDx = 0; }
+                                <div class="col-sm-12">
+                                    <div class="widget">
+                                        <ul class="recent_posts_widget">
+                                            @foreach (Post evnt in rtrts)
+                                            {
+                                                <li class="@((rtrtDx++ == 0) ? "visible-sm visible-xs" : "")" style="height:100%;">
+                                                    <table>
+                                                        <tr valign="top">
+                                                            @if (evnt.Cover != null) { <td><img src="@evnt.GetCoverUrl(true)" alt="" class="img-circle img-thumbnail" style="height:40px;width:40px;" /></td> }
+                                                            <td>
+                                                                <a href="@evnt.GetUrl(appctx)">@Html.Raw(evnt.GetTitle(70))</a>
+                                                                <div class="blog-carousel-meta">
+                                                                    <span><i class="fa fa-calendar"></i> @evnt.GetStartDate(true)</span>
+                                                                    @if (ViewBag.ForAllRegion == true)
+                                                                    {
+                                                                        <span style="font-style:italic;"><i class="fa fa-globe"></i> @evnt.GetRegionsAsString(appctx)</span>
+                                                                    }
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="visible-xs" style="margin:0px;" />
+                </div>
+            }
+            @if ((evnts?.Count() ?? 0) > 0)
+            {
+                <div id="content" class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="padding-bottom:0px;">
+                    <div class="widget">
+                        <div class="title"><h2><a href="@(regionuri)calendrier/pg11">Prochainement <i class="fa fa-external-link" style="font-size: 15px;"></i></a></h2></div>
+                        <div class="row reviews_widget">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="col-sm-12">
+                                    <div class="widget">
+                                        <ul class="recent_posts_widget">
+                                            @foreach (Post evnt in evnts)
+                                            {
+                                                <li style="height:100%;">
+                                                    <table>
+                                                        <tr valign="top">
+                                                            @if (evnt.Cover != null) { <td class="visible-sm visible-xs"><img src="@evnt.GetCoverUrl(true)" alt="" class="img-circle img-thumbnail" style="height:40px;width:40px;" /></td> }
+                                                            <td>
+                                                                <a href="@evnt.GetUrl(appctx)">@Html.Raw(evnt.GetTitle(70))</a>
+                                                                <div class="blog-carousel-meta">
+                                                                    <span><i class="fa fa-calendar"></i> @evnt.GetStartDate(true)</span>
+                                                                    @if (ViewBag.ForAllRegion == true)
+                                                                    {
+                                                                        <span style="font-style:italic;"><i class="fa fa-globe"></i> @evnt.GetRegionsAsString(appctx)</span>
+                                                                    }
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="clearfix"></div>
+        </div>
+    </section>
+}
+
+<section class="blog-wrapper" style="padding-top-off:40px;padding-bottom-off:40px;    background: url(/theme/jollyany/demos/custom_wrapper_bg.jpg) no-repeat center center;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;">
+    <div class="container">
+        @if ((ltsts?.Count() ?? 0) > 0)
+        {
+            <div id="content" class="col-lg-8 col-md-8 col-sm-6 col-xs-12" style="padding-bottom:10px;">
+                <div class="widget">
+                    <div class="title"><h2><a href="@(regionuri)derniers-articles/pg5">DERNIERS ARTICLES <i class="fa fa-external-link" style="font-size: 15px;"></i></a></h2></div>
+                    <div class="row reviews_widget">
+                        @foreach (Post ltst in ltsts)
+                        {
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 hidden-sm hidden-xs">
+                                <div class="col-sm-12">
+                                    <div class="blog-carousel" style="margin-bottom:25px;">
+                                        @if (ltst.Cover != null)
+                                        {
+                                            <div class="entry">
+                                                <img src="@ltst.GetCoverUrl(true)" alt="" class="img-responsive">
+                                            </div>
+                                        }
+                                        <div class="blog-carousel-header" style="padding-bottom:0px;">
+                                            <h3><a href="@ltst.GetUrl(appctx)">@Html.Raw(ltst.GetTitle(70))</a></h3>
+                                            <div class="blog-carousel-meta">
+                                                <span><i class="fa fa-rss"></i> @ltst.GetPublicationDate()</span>
+                                                @if (ViewBag.ForAllRegion == true)
+                                                {
+                                                    <span style="font-style:italic;"><i class="fa fa-globe"></i> @ltst.GetRegionsAsString(appctx)</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            break;
+                        }
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            @{ rtrtDx = 0; }
+                            <div class="col-sm-12">
+                                <div class="widget">
+                                    <ul class="recent_posts_widget">
+                                        @foreach (Post ltst in ltsts)
+                                        {
+                                            <li class="@((rtrtDx++ == 0) ? "visible-sm visible-xs" : "")" style="height:100%;">
+                                                <table>
+                                                    <tr valign="top">
+                                                        @if (ltst.Cover != null) { <td><img src="@ltst.GetCoverUrl(true)" alt="" class="img-circle img-thumbnail" style="height:40px;width:40px;" /></td> }
+                                                        <td>
+                                                            <a href="@ltst.GetUrl(appctx)">@Html.Raw(ltst.GetTitle(70))</a>
+                                                            <div class="blog-carousel-meta">
+                                                                <span><i class="fa fa-rss"></i> @ltst.GetPublicationDate()</span>
+                                                                @if (ViewBag.ForAllRegion == true) { <span style="font-style:italic;"><i class="fa fa-globe"></i> @ltst.GetRegionsAsString(appctx)</span> }
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </li>
+                                            if (rtrtDx == 6) { break; }
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div id="sidebar" class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="widget">
+                <div class="title"><h2></h2></div>
+                <ul class="recent_posts_widget" style="padding-left: 20px;">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 first">
+                        <div class="ch-item">
+                            <div class="ch-info-wrap">
+                                <div class="ch-info">
+                                    <div class="ch-info-front">
+                                        <i class="fa fa-users fa-4x"></i>
+                                        <h3>Témoignages</h3>
+                                    </div>
+                                    <div class="ch-info-back">
+                                        <h3><br /><a href="@(regionuri)temoignage/pg6/ct21">Ils ont rencontrés le Christ, cliquez pour écouter leurs témoignages...</a></h3>
+                                        <p></p>
+                                    </div>
+                                </div><!-- end ch-info -->
+                            </div><!-- end ch-info-wrap -->
+                        </div><!-- end ch-item -->
+                    </div><!-- end col-sm-3 -->
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="ch-item">
+                            <div class="ch-info-wrap">
+                                <div class="ch-info">
+                                    <div class="ch-info-front">
+                                        <i class="fa fa-play-circle-o fa-4x"></i>
+                                        <h3>Enseignements</h3>
+                                    </div>
+                                    <div class="ch-info-back">
+                                        <h3><br /><a href="@(regionuri)temoignage/pg6/ct16">Cliquez pour écouter les enseignements...</a></h3>
+                                        <p></p>
+                                    </div>
+                                </div><!-- end ch-info -->
+                            </div><!-- end ch-info-wrap -->
+                        </div><!-- end ch-item -->
+                    </div><!-- end col-sm-3 -->
+                </ul>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</section>
+
+<section class="blog-wrapper">
+    <div class="container">
+        <div id="content" class="col-lg-8 col-md-8 col-sm-6 col-xs-12" style="padding-bottom:10px;">
+            <div class="widget">
+                @*<div class="title"><h2><i class="fa fa-check"></i> Utiles</h2></div>*@
+                <div class="row reviews_widget">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-sm-12">
+                            <div class="widget" style="margin-left: 52px;">
+                                <ul class="recent_posts_widget">
+                                    <li style="height:100%;margin-bottom:5px;"><a href="http://www.topchretien.com/topbible/view/bible/">La Sainte Bible</a></li>
+                                    <li style="height:100%;margin-bottom:5px;"><a href="http://www.vatican.va/archive/FRA0013/_INDEX.HTM">Catéchisme de l'Église Catholique</a></li>
+                                    <li style="height:100%;margin-bottom:5px;"><a href="http://www.vatican.va/archive/compendium_ccc/documents/archive_2005_compendium-ccc_fr.html">Compendium</a></li>
+                                    <li style="height:100%;margin-bottom:5px;"><a href="http://www.vatican.va/archive/FRA0037/_INDEX.HTM">Code de Droit Canonique</a></li>
+                                    <li style="height:100%;margin-bottom:5px;"><a href="http://www.vatican.va/archive/hist_councils/ii_vatican_council/index_fr.htm">Concile Vatican II</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-sm-12">
+                            <div class="widget" style="margin-left: 52px;">
+                                <ul class="recent_posts_widget">
+                                    <li style="height:100%;margin-bottom:5px;"><a href="http://www.news.va/fr">News.va</a></li>
+                                    <li style="height:100%;margin-bottom:5px;"><a href="http://w2.vatican.va/content/vatican/fr.html">Le Saint-Siège</a></li>
+                                    <li style="height:100%;margin-bottom:5px;"><a href="http://www.eglise.catholique.fr/accueil.html">Conférence des évêques de France</a></li>
+                                    <li style="height:100%;margin-bottom:5px;"><a href="http://levangileauquotidien.org/presentation/FR/">L'Evangile au Quotidien</a></li>
+                                    <li style="height:100%;margin-bottom:5px;"><a href="http://egliseinfo.catholique.fr/">Messe Info</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="sidebar" class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="widget">
+                <ul class="recent_posts_widget" style="padding-left: 20px;">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+                         style="font-family: Ubuntu, Helvetica; color: white; padding: 0px 25px; background-color: #4dA2D8; text-align: center; vertical-align: middle; display: inline-block; border-radius: 6px;margin-top:10px;margin-bottom:30px;">
+                        <div style="display: table; height: 45px; width:100%;">
+                            <div style="display: table-cell; vertical-align: middle;">
+                                <div style="font-family: Ubuntu, Helvetica; display: inline-block; text-align: center; font-size: 13px; vertical-align: middle; color: rgb(255, 255, 255);">
+                                    <a href="mailto:@emailContact?Subject=Demande d'information" target="_top">
+                                        <b>NOUS CONTACTER !</b>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- end col-sm-3 -->
+
+                    @if (string.IsNullOrEmpty(mailing_link_param) == false)
+                    {
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="font-family: Ubuntu, Helvetica; color: white; padding: 0px 25px; background-color: #4dA2D8; text-align: center; vertical-align: middle; display: inline-block; border-radius: 6px;">
+                        <div style="display: table; height: 45px; width:100%;">
+                            <div style="display: table-cell; vertical-align: middle;">
+                                <div style="font-family: Ubuntu, Helvetica; display: inline-block; text-align: center; font-size: 13px; vertical-align: middle; color: rgb(255, 255, 255);">
+                                    <a href="@mailing_link_param" target="_top">
+                                        <b>ABONNEZ-VOUS À LA NEWSLETTER !</b>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- end col-sm-3 -->
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</section>
+
+@section scripts {
+}
+
+@{
+    // Trace performance...
+    appctx?.AddPerfLog("Vep\\Views\\Home\\Region.cshtml");
+}

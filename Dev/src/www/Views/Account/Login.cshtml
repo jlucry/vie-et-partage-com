@@ -1,0 +1,49 @@
+﻿@using System.Collections.Generic
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Authentication
+@using Services;
+@model LoginViewModel
+@*@inject SignInManager<ApplicationUser> SignInManager*@
+@{
+    //Layout = "_LayoutAccount";
+    ViewData["Title"] = "Connection";
+    WcmsAppContext appctx = (WcmsAppContext)ViewContext.RouteData.Values["appcontext"];
+    bool privateSite = appctx?.Site?.Private ?? false;
+}
+<section class="blog-wrapper">
+    <div class="container">
+        <div id="content" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" autocomplete="off" class="form-horizontal" style="margin:20px;" role="form">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-material" style="padding-bottom:20px;">
+                        <label asp-for="Email" class="floating-label"></label>
+                        <input asp-for="Email" type="email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-material" style="padding-bottom:20px;">
+                        <label asp-for="Password" class="floating-label"></label>
+                        <input asp-for="Password" type="password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-material" style="padding-bottom:20px;">
+                        <div class="checkbox-custom checkbox-inline checkbox-primary checkbox-lg pull-left" style="padding-top:0px;">
+                            <input asp-for="RememberMe">
+                            <label for="inputCheckbox">@Html.DisplayNameFor(m => m.RememberMe)</label>
+                        </div>
+                        <a class="pull-right" asp-action="ForgotPassword">Mot de passe oublié ?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:20px;">Se connecter</button>
+                    @if (privateSite == false)
+                    {
+                        <p style="margin-top:20px;">Vous n’avez pas encore de compte ? <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]">Créez-en un dès maintenant</a></p>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

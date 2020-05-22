@@ -1,0 +1,14 @@
+[Unit]
+Description=wcms
+
+[Service]
+ExecStart=/usr/bin/dotnet /var/aspnetcore/wcms/www.dll
+Restart=always
+RestartSec=10                                          # Restart service after 10 seconds if dotnet service crashes
+SyslogIdentifier=dotnet-wcms
+User=www-data
+Environment=ASPNETCORE_ENVIRONMENT=Production 
+WorkingDirectory=/var/aspnetcore/wcms
+
+[Install]
+WantedBy=multi-user.target

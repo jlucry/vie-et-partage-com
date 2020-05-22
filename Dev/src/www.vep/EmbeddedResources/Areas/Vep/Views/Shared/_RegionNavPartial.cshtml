@@ -1,0 +1,60 @@
+﻿@using Contracts;
+@using Models;
+@using Services;
+@{
+    //Console.WriteLine("+++ Vep:_RegionNavPartial...");
+    // Get app context...
+    WcmsAppContext appctx = (WcmsAppContext)ViewContext.RouteData.Values["appcontext"];
+    ICollection<SiteClaim> regions = appctx?.Site?.GetRegions(EOrderBy.Name);
+    SiteClaim currentregion = appctx?.Region;
+    string pageUrl = this.Context.Request.Path.Value.ToLower();
+    if (currentregion?.StringValue != null)
+    {
+        pageUrl = pageUrl.Replace($"/{currentregion?.StringValue.ToLower()}", string.Empty);
+        if (string.IsNullOrEmpty(pageUrl) == true)
+        {
+            pageUrl = "/";
+        }
+    }
+}
+
+@if (regions != null && regions.Count != 0)
+{
+    <div id="topbar" class="clearfix-off hidden-sm-off hidden-xs" style="border-top: 1px solid #f2f2f2;">
+        <div class="container">
+            <div class="container" style="width:100%;padding:0px;">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding:0px;font-size: 11px;">
+                    <div class="topmenu-off bs-example-tooltips">
+                        <span class="topbar-phone" style="border-left:none;"><a href="@pageUrl" style="@((currentregion == null || currentregion.Id == 0) ? "text-decoration: underline;" : "")">Toutes les régions</a></span>
+                        @foreach (Models.SiteClaim stClaim in regions)
+                        {
+                            <span class="topbar-phone"><a href="/@($"{stClaim?.StringValue.ToLower()}{pageUrl}")" style="@((currentregion != null && currentregion.Id == stClaim.Id) ? "text-decoration: underline;" : "")">@stClaim?.StringValue</a></span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="topbar" class="clearfix-off  visible-sm-off visible-xs">
+        <div class="container" style="width:100%;padding:0px;">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding:0px;font-size: 11px;">
+                <div class="topmenu-off bs-example-tooltips">
+                    @Html.Raw("<select class=\"form-control\" id=\"regionListNav\" name=\"regionListNav\" style=\"width:100%;border-top:none;\">\r\n")
+                    @Html.Raw($"<option value=\"{pageUrl}\">Toutes les régions</option>\r\n")
+                    @foreach (Models.SiteClaim region in regions)
+                    {
+                        @Html.Raw($"<option {((currentregion != null && currentregion.Id == region.Id) ? "selected" : "")} value=\"/{region?.StringValue?.ToLower()}{pageUrl}\">{region?.StringValue}</option>\r\n")
+                    }
+                    @*Html.Raw("<option value=\"%=FiltreRegionUrl%\">%=FiltreRegionUrlDescription%</option>\r\n")*@
+                    @Html.Raw("</select>\r\n")
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@{
+    //Console.WriteLine("+++ Vep:_RegionNavPartial: END.");
+    // Trace performance...
+    appctx?.AddPerfLog("Vep\\Views\\Shared\\_RegionNavPartial.cshtml");
+}
