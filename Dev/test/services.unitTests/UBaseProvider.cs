@@ -159,7 +159,7 @@ namespace Services.UnitTests
             Assert.NotEqual(null, logFactory);
 #if DEBUG
             //logFactory.AddConsole(_LogFilter);
-            logFactory.AddDebug(_LogFilter);
+            //logFactory.AddDebug(_LogFilter);
 #endif
 
             // Create and init the context...
