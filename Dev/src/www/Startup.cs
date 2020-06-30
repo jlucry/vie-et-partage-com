@@ -2,13 +2,8 @@
 #undef SERILOG_SED
 #define SERILOG_FILE
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,19 +18,15 @@ using Microsoft.Extensions.FileProviders;
 using Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json.Serialization;
-using System.Diagnostics;
 //using MySQL.Data.EntityFrameworkCore.Extensions;
 using contracts;
 using Serilog;
-using System.IO;
-using Serilog.Events;
-using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.ResponseCaching;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
+using AuthorizationMiddleware = Microsoft.AspNetCore.Authorization.AuthorizationMiddleware;
 
 namespace www
 {
