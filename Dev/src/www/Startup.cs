@@ -364,7 +364,7 @@ namespace www
                         });
                 })
                 // De-Camelizing JSON in ASP.NET Core...
-                .AddJsonOptions(opt => {
+                .AddNewtonsoftJson(opt => {
                     var resolver = opt.SerializerSettings.ContractResolver;
                     if (resolver != null)
                     {
