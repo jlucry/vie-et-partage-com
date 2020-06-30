@@ -247,6 +247,47 @@ namespace www
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddLogging(loggingBuilder =>
+            {
+                // Init logging...
+                if (Configuration["logMethod"] == "serilog")
+                {
+                    //loggerFactory.AddFile(Path.Combine(env.ContentRootPath, "logs/{Date}.txt"));
+                    loggingBuilder.AddFile(Configuration.GetSection("Logging"));
+                }
+                else if (Configuration["logMethod"] == "serilog_sed")
+                {
+                    loggingBuilder.AddSerilog();
+                }
+                else if (Configuration["logMethod"] == "serilog_console")
+                {
+                    loggingBuilder.AddSerilog();
+                    // Ensure any buffered events are sent at shutdown
+                    //appLifetime.ApplicationStopped.Register(Log.CloseAndFlush);
+                }
+                else if (Configuration["logMethod"] == "console")
+                {
+                    // Init logging...
+                    //loggerFactory.MinimumLevel = (hostingEnvironment.IsDevelopment())
+                    //    ? LogLevel.Verbose
+                    //    : LogLevel.Information;
+                    //loggerFactory.AddConsole(loggerFactory.MinimumLevel);
+                    //loggerFactory.AddDebug(loggerFactory.MinimumLevel);
+                    loggingBuilder.AddConfiguration(Configuration.GetSection("Logging"));
+                    //"Microsoft.Extensions.Logging.TraceSource": "1.0.0",
+                    //"Microsoft.Extensions.Logging.AzureAppServices": "1.0.0-preview1-final",
+                    //var testSwitch = new SourceSwitch("sourceSwitch", "Logging Sample");
+                    //testSwitch.Level = SourceLevels.Verbose;
+                    //loggerFactory.AddTraceSource(testSwitch,
+                    //    new TextWriterTraceListener(writer: Console.Out));
+                    //loggerFactory.AddAzureWebAppDiagnostics();
+                    //System.Diagnostics.Trace.TraceError("ERRRRRRRRRRRRR");
+#if DEBUG
+                    loggingBuilder.AddDebug();
+#endif
+                }
+            });
+
             // Add framework services.
             //services.AddApplicationInsightsTelemetry(Configuration);
 
@@ -420,44 +461,6 @@ namespace www
             ILoggerFactory loggerFactory,
             IApplicationLifetime appLifetime/*, AppDbContext context*/)
         {
-            // Init logging...
-            if (Configuration["logMethod"] == "serilog")
-            {
-                //loggerFactory.AddFile(Path.Combine(env.ContentRootPath, "logs/{Date}.txt"));
-                loggerFactory.AddFile(Configuration.GetSection("Logging"));
-            }
-            else if (Configuration["logMethod"] == "serilog_sed")
-            {
-                loggerFactory.AddSerilog();
-            }
-            else if (Configuration["logMethod"] == "serilog_console")
-            {
-                loggerFactory.AddSerilog();
-                // Ensure any buffered events are sent at shutdown
-                appLifetime.ApplicationStopped.Register(Log.CloseAndFlush);
-            }
-            else if(Configuration["logMethod"] == "console")
-            {
-                // Init logging...
-                //loggerFactory.MinimumLevel = (hostingEnvironment.IsDevelopment())
-                //    ? LogLevel.Verbose
-                //    : LogLevel.Information;
-                //loggerFactory.AddConsole(loggerFactory.MinimumLevel);
-                //loggerFactory.AddDebug(loggerFactory.MinimumLevel);
-                loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-                //"Microsoft.Extensions.Logging.TraceSource": "1.0.0",
-                //"Microsoft.Extensions.Logging.AzureAppServices": "1.0.0-preview1-final",
-                //var testSwitch = new SourceSwitch("sourceSwitch", "Logging Sample");
-                //testSwitch.Level = SourceLevels.Verbose;
-                //loggerFactory.AddTraceSource(testSwitch,
-                //    new TextWriterTraceListener(writer: Console.Out));
-                //loggerFactory.AddAzureWebAppDiagnostics();
-                //System.Diagnostics.Trace.TraceError("ERRRRRRRRRRRRR");
-#if DEBUG
-                loggerFactory.AddDebug(LogLevel.Debug);
-#endif
-            }
-
             // Enable the response cache middleware...
             app.UseResponseCaching();
 
