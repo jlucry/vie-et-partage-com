@@ -35,7 +35,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.ResponseCaching;
 using Microsoft.AspNetCore.Identity;
-
+using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 
 namespace www
 {
@@ -383,7 +383,7 @@ namespace www
                 .AddApplicationPart(typeof(VepSiteSettings).GetTypeInfo().Assembly);
 
             // Configure Razor view engine...
-            services.Configure<RazorViewEngineOptions>(options =>
+            services.Configure<MvcRazorRuntimeCompilationOptions>(options =>
             {
                 //options.FileProviders.Clear();
                 options.FileProviders.Add(new CompositeFileProvider(
