@@ -338,6 +338,7 @@ namespace www
             services
                 .AddMvc(options =>
                 {
+                    options.EnableEndpointRouting = false;
                     options.CacheProfiles.Add("Default",
                         new CacheProfile()
                         {
